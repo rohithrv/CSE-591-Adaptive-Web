@@ -12,12 +12,13 @@ from collections import Counter
 from nltk.tokenize import sent_tokenize, word_tokenize
 
 class CoreOps:
-    def __init__(self):
+    # def __init__(self):
         # init create a connection and a cursor object
-        self.conn = sqlite3.connect("db.sqlite3")
-        self.c = self.conn.cursor()
+        # conn = sqlite3.connect("db.sqlite3")
+        # c = conn.cursor()
 
     def getTopFromCounter(self, li, top_no):
+
         result_list = []
         temp = Counter(li).most_common(top_no)
         for t in temp:
@@ -26,7 +27,9 @@ class CoreOps:
 
 
     def getTgasForAllNotes(self):
-        res = self.c.execute("select noteid,content,title from notes_notes ").fetchall()
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
+        res = c.execute("select noteid,content,title from notes_notes ").fetchall()
         for r in res:
             print(r)
             note_tags = self.getTagsFromString(r[1])
@@ -35,21 +38,23 @@ class CoreOps:
             title = r[2]
             title = title.replace("'","")
             title = "~".join(title.split())
-            self.c.execute("insert or replace into notes_note_meta (note_id, tags, title) VALUES (" +str(r[0]) + " , '" + note_tags + "','"+title+"' )")
-            self.conn.commit()
+            c.execute("insert or replace into notes_note_meta (note_id, tags, title) VALUES (" +str(r[0]) + " , '" + note_tags + "','"+title+"' )")
+            conn.commit()
+            c.close()
+            conn.close()
         #     call this only once
 
 
-    def cleanup(self):
-        # use this at the end of the program to close the connection to the database
-        self.c.close()
+
 
     def getCBforNote(self, note_id):
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
         final_title_tags = []
         final_tags = []
         print("get notes with same tags as this one")
         title_tags, note_tags = self.getTagsForNote(note_id)
-        res = self.c.execute("select * from notes_note_meta where note_id != "+str(note_id))
+        res = c.execute("select * from notes_note_meta where note_id != "+str(note_id))
         for r in res:
             noteid = r[0]
             t_tags = r[2].split("~")
@@ -65,13 +70,17 @@ class CoreOps:
         final_title_tags = self.getTopFromCounter(final_title_tags, 10)
         print(final_title_tags)
         print(list(set(final_tags)-set(final_title_tags)))
+        c.close()
+        conn.close()
         return final_title_tags, list(set(final_tags)-set(final_title_tags))
 
     def getCBforUser(self, user_id):
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
         final_tags = []
         print("user recomendations coming right up")
         user_tags = self.getTagsForUser(user_id)
-        res = self.c.execute("select * from notes_note_meta")
+        res = c.execute("select * from notes_note_meta")
         for r in res:
             # print(r)
             noteid = r[0]
@@ -87,6 +96,8 @@ class CoreOps:
                         final_tags.append(noteid)
 
         final_tags = self.getTopFromCounter(final_tags, 10)
+        c.close()
+        conn.close()
         return final_tags
 
 
@@ -96,14 +107,17 @@ class CoreOps:
         print("get similar user and get thier public notes")
 
     def userOpenedNote(self,user_id, note_id):
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
         # call this function when the user opens a note , pass the user_id and note_id as argument
         tags = ""
-        res = self.c.execute("select * from notes_user_meta WHERE user_id ="+str(user_id))
+        t_tags = ""
+        res = c.execute("select * from notes_user_meta WHERE user_id ="+str(user_id))
         if (len(res.fetchall())==0):
             print("this row doest exist yet let create it")
-            self.c.execute("insert into notes_user_meta VALUES ("+str(user_id)+", '', '')")
-            self.conn.commit()
-        res = self.c.execute("select * from notes_user_meta WHERE user_id =" + str(user_id))
+            c.execute("insert or replace into notes_user_meta VALUES ("+str(user_id)+", '', '')")
+            conn.commit()
+        res = c.execute("select * from notes_user_meta WHERE user_id =" + str(user_id))
         # print(res)
         for r in res:
             print(r)
@@ -113,19 +127,23 @@ class CoreOps:
         title_tags, note_tags = self.getTagsForNote(note_id)
         # print(note_tags)
         tags = ','.join(note_tags)+"," + tags
-        t_tags = ','.join(title_tags)+", " + t_tags
+        t_tags = ','.join(title_tags)+", " + str(t_tags)
 
         tags = tags.replace(",","~")
         t_tags = t_tags.replace(",","~")
         print(tags)
         print(t_tags)
-        self.c.execute("insert or replace into notes_user_meta (user_id, tags, titles) VALUES ('"+ str(user_id) + "', '" + tags + "','"+t_tags+"')")
-        self.conn.commit()
+        c.execute("insert or replace into notes_user_meta (user_id, tags, titles) VALUES ('"+ str(user_id) + "', '" + tags + "','"+t_tags+"')")
+        conn.commit()
+        c.close()
+        conn.close()
     #     commits the values to the database, these tags can be used by calling getUserTags functiom
 
 
 
     def saveTheNote(self, note_id, note_text):
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
         # call this function when the note is created or existing note is edited
         print("getting the tags from the updated user note")
         note_tags = self.getTagsFromString(note_text)
@@ -139,24 +157,39 @@ class CoreOps:
         else:
             temp_str ="'"+temp_str +"'"
         # print(str(note_id)+" , "+temp_str)
-        self.c.execute("insert or replace into notes_note_meta (note_id, tag1, tag2, tag3, tag4, tag5) VALUES ("+str(note_id)+" , "+temp_str+" )")
-        self.conn.commit()
+        c.execute("insert or replace into notes_note_meta (note_id, tag1, tag2, tag3, tag4, tag5) VALUES ("+str(note_id)+" , "+temp_str+" )")
+        conn.commit()
+        c.close()
+        conn.close()
     #     no return, just commits to the database
 
 
     def getTagsForNote(self, note_id):
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
         # call this funciton with note_id to get the tags associated with the note
-        res = self.c.execute("select * from notes_note_meta where note_id = "+str(note_id))
+        res = c.execute("select * from notes_note_meta where note_id = "+str(note_id))
         for r in res:
+            temp = r[1]
+            temp2 = r[2]
+            if str(r[1]).isdigit():
+                temp = ""
+            if str(r[2]).isdigit():
+                temp2 = ""
             print(r[1].split("~"))
-            return list(r[2].split("~")), list(r[1].split("~"))
+            c.close()
+            conn.close()
+            return list(temp2.split("~")), list(temp.split("~"))
+
     #     returns a python list of all the tags associated with a note
 
 
     def getTagsForUser(self, user_id):
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
         # call this fucntion to get the tags that are associateaad to each user based on the notes he viewed
         print("getting tags for user")
-        res = self.c.execute("select * from notes_user_meta WHERE user_id = "+str(user_id))
+        res = c.execute("select * from notes_user_meta WHERE user_id = "+str(user_id))
         tags=""
         for r in res:
             tags = r[1]+"~"+r[2]
@@ -168,6 +201,8 @@ class CoreOps:
         for t in test:
             top_tags.append(t[0])
         print(top_tags)
+        c.close()
+        conn.close()
         return top_tags
     # return the top 10 tags for the user, call this fucntion dynamically when you need to get the tags for an user
 
@@ -201,7 +236,7 @@ class CoreOps:
 
 obj = CoreOps()
 # obj.getCBforNote(419)
-print(obj.getCBforUser(12))
+# print(obj.getCBforUser(12))
 # obj.getTagsForNote(419)
 # obj.userOpenedNote(12, 419)
 # obj.getTagsForUser(12)
