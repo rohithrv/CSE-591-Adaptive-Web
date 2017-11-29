@@ -33,15 +33,16 @@ class CoreOps:
         for r in res:
             # print(r)
             note_tags = self.getTagsFromString(r[1])
+            title_tags = self.getTagsFromString(r[2])
             tag_list = []
-            print(str(r[0]) + " , '" + note_tags + "','"+r[2])
-            title = r[2]
+            print(str(r[0]) + " , '" + note_tags + "','"+title_tags)
+            title = title_tags
             title = title.replace("'","")
             title = "~".join(title.split())
             c.execute("insert or replace into notes_note_meta (note_id, tags, title) VALUES (" +str(r[0]) + " , '" + note_tags + "','"+title+"' )")
             conn.commit()
-            c.close()
-            conn.close()
+        c.close()
+        conn.close()
         #     call this only once
 
 
@@ -208,6 +209,23 @@ class CoreOps:
         conn.close()
         return top_tags
     # return the top 10 tags for the user, call this fucntion dynamically when you need to get the tags for an user
+    def getMostusedTags(self):
+        full_list = []
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
+        res = c.execute("select title from notes_note_meta")
+        for r in res:
+            for temp in r:
+                t = temp.split("~")
+                for test in t:
+                    full_list.append(test)
+        res_tags = self.getTopFromCounter(full_list, 10)
+        print(res_tags[1:])
+
+        c.close()
+        conn.close()
+        return res_tags
+
 
     def getTagsFromString(self, st):
         # this fucntion get tags from a particular post by comparing with all the other notes in the database
@@ -216,9 +234,8 @@ class CoreOps:
         stop_words = set(stopwords.words('english'))
         # stop_words.clear()
         stop_words.update(
-            ["-", '.', ',', '"', "'", '?', '!', ':', ';', '(', ')', '[', ']', '{', '}', 'geturl', 'logs', 'mouseover',
-             'home', 'javatagged',
-             '~', '&', '>', '<', "/", "''", 'name', 'data', "...", '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+            ["-", '.', ',', '"', "'", '?', '!', ':', ';', '(', ')', '[', ']', '{', '}',
+             '~', '&', '>', '<', "/", "''", "...", '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Vs', "NULL", ])
         soup = BeautifulSoup(st, "lxml")
         st = " ".join(soup.findAll(text=True))
         words = word_tokenize(st)
@@ -238,6 +255,10 @@ class CoreOps:
         return fin
 
 obj = CoreOps()
+# obj.getTgasForAllNotes()
+obj.getMostusedTags()
+
+
 # obj.getCBforNote(419)
 # print(obj.getCBforUser(12))
 # obj.getTagsForNote(419)
