@@ -21,15 +21,20 @@
         </script>
 
   <body>
+  <div style="margin-top: 200px; margin-left: 10%">
+  <h4>Your Tags</h4>
 <form role="form"  id="first_page" method="post" >
     {% csrf_token %}
     {%block content%}
     <div class="bs-example">
+    <h5>to add new tags, type the tag and hit tab, save your preferences before navigating away</h5>
 
             <input style="font-size: 5%" name = "tags" type="text" value="{% for t in tags %}{{ t }} ,  {% endfor %}" data-role="tagsinput" />
           </div>
+        <li> </li>
     <button type="">Save Preferences</button>
 </form>
+        </div>
 
 
 {% endblock %}

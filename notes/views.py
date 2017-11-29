@@ -42,14 +42,23 @@ def home(request):
     return render(request, 'new_home.html', context)
 
 def displayUserProfile(request):
+    if request.method == "POST":
+        print("-------POST________________")
     user_name = request.user.get_username()
     context = {}
+    static_tags = obj.getTagsForUser(request.user.get_username())
+    context = {"tags": static_tags}
+    tags = static_tags
     if request.method == "POST":
-        tags = request.POST.get('tags')
-        print(tags)
-    tags = obj.getTagsForUser(request.user.get_username())
-    context  = {"tags": tags}
+        saved_tags = request.POST.get('tags')
+        print("----------")
+        print(saved_tags)
+        obj.saveUserPref(request.user.get_username(), saved_tags)
+        static_tags = obj.getTagsForUser(request.user.get_username())
+        context = {"tags": static_tags}
+        return render(request, 'profilePage.html', context)
     return render(request, 'profilePage.html', context)
+
 
 @login_required
 def mynotes(request):

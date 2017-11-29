@@ -151,7 +151,25 @@ class CoreOps:
         conn.close()
     #     commits the values to the database, these tags can be used by calling getUserTags functiom
 
+    def saveUserPref(self, user_id , li):
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
+        li = li.replace(" ","")
+        data = li.replace(",", "~")
+        # data = data.repalce(" ","")
+        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id =" + str(user_id))
+        # res[0][1]
+        # res[0][2]
+        for r in res:
+            t_tags = r[2]
+        tags=data
+        print("!!!!!!!!!!!!!!!!!!!!")
+        print(str(user_id) + "', '" + tags + "','" + tags)
+        c.execute("insert or replace into notes_user_meta (user_id, tags, titles) VALUES ('" + str(user_id) + "', '" + tags + "','" + t_tags + "')")
+        conn.commit()
 
+        c.close()
+        conn.close()
 
     def saveTheNote(self, note_id, note_title, note_text):
         conn = sqlite3.connect("db.sqlite3")
@@ -162,6 +180,7 @@ class CoreOps:
         title_tags = self.getTagsFromString(note_title)
         # note_tags = note_tags.split("~")
         # title_tags = title_tags.split("~")
+
         c.execute("insert or replace into notes_note_meta (note_id, tags, title) VALUES ("+str(note_id)+" , '"+note_tags+"' , '"+title_tags+"' )")
         conn.commit()
         c.close()
@@ -226,6 +245,8 @@ class CoreOps:
         c.close()
         conn.close()
         return res_tags
+
+
 
 
     def getTagsFromString(self, st):
