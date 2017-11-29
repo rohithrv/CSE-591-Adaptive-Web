@@ -112,10 +112,35 @@ class CoreOps:
         return final_tags
 
 
+    def getSimilarUsers(self, user_id):
+        conn = sqlite3.connect("db.sqlite3")
+        full_user_list = []
+        c = conn.cursor()
+        user_tags = self.getTagsForUser(str(user_id))
+        res = c.execute("select user_id, tags, titles from notes_user_meta where user_id != "+str(user_id))
+        for r in res:
+            new_user_id = r[0]
+            new_user_tags = r[1].split("~")
+            new_user_title = r[2].split("~")
+            for u_tag in user_tags:
+                if u_tag in new_user_tags:
+                    full_user_list.append(new_user_id)
+                if u_tag in new_user_title:
+                    full_user_list.append(new_user_id)
+
+        similar_users = self.getTopFromCounter(full_user_list, 10)
+        print(similar_users)
+        return similar_users
+
+
+
+        c.close()
+        conn.close()
 
 
     def getCFforUser(self, user_id):
-        print("get similar user and get thier public notes")
+        print("get notes from similar users")
+
 
     def userOpenedNote(self,user_id, note_id):
         conn = sqlite3.connect("db.sqlite3")
@@ -278,8 +303,8 @@ class CoreOps:
 
 obj = CoreOps()
 # obj.getTgasForAllNotes()
-obj.getMostusedTags()
-
+# obj.getMostusedTags()
+obj.getSimilarUsers(2)
 
 # obj.getCBforNote(419)
 # print(obj.getCBforUser(12))
