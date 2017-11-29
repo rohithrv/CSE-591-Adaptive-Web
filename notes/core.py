@@ -31,7 +31,7 @@ class CoreOps:
         c = conn.cursor()
         res = c.execute("select noteid,content,title from notes_notes ").fetchall()
         for r in res:
-            print(r)
+            # print(r)
             note_tags = self.getTagsFromString(r[1])
             tag_list = []
             print(str(r[0]) + " , '" + note_tags + "','"+r[2])
@@ -52,11 +52,21 @@ class CoreOps:
         c = conn.cursor()
         final_title_tags = []
         final_tags = []
-        print("get notes with same tags as this one")
+        print("get notes with same tags as this one "+str(note_id))
         title_tags, note_tags = self.getTagsForNote(note_id)
-        res = c.execute("select * from notes_note_meta where note_id != "+str(note_id))
+        res = c.execute("select note_id, tags, title from notes_note_meta where note_id != "+str(note_id))
         for r in res:
+            # print(r)
+            print(r[0])
             noteid = r[0]
+            # r1 =""
+            # r2 =""
+            # # if str(r[0]).isdigit():
+            # #     r = ""
+            # if str(r[2]).isdigit():
+            #     r = ""
+            # t_tags = ""
+
             t_tags = r[2].split("~")
             tags = r[1].split("~")
             for t in title_tags:
@@ -80,7 +90,7 @@ class CoreOps:
         final_tags = []
         print("user recomendations coming right up")
         user_tags = self.getTagsForUser(user_id)
-        res = c.execute("select * from notes_note_meta")
+        res = c.execute("select note_id, tags, title from notes_note_meta")
         for r in res:
             # print(r)
             noteid = r[0]
@@ -112,15 +122,15 @@ class CoreOps:
         # call this function when the user opens a note , pass the user_id and note_id as argument
         tags = ""
         t_tags = ""
-        res = c.execute("select * from notes_user_meta WHERE user_id ="+str(user_id))
+        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id ="+str(user_id))
         if (len(res.fetchall())==0):
-            print("this row doest exist yet let create it")
+            # print("this row doest exist yet let create it")
             c.execute("insert or replace into notes_user_meta VALUES ("+str(user_id)+", '', '')")
             conn.commit()
-        res = c.execute("select * from notes_user_meta WHERE user_id =" + str(user_id))
+        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id =" + str(user_id))
         # print(res)
         for r in res:
-            print(r)
+            # print(r)
             tags = r[1]
             t_tags = r[2]
 
@@ -131,8 +141,8 @@ class CoreOps:
 
         tags = tags.replace(",","~")
         t_tags = t_tags.replace(",","~")
-        print(tags)
-        print(t_tags)
+        # print(tags)
+        # print(t_tags)
         c.execute("insert or replace into notes_user_meta (user_id, tags, titles) VALUES ('"+ str(user_id) + "', '" + tags + "','"+t_tags+"')")
         conn.commit()
         c.close()
@@ -168,7 +178,7 @@ class CoreOps:
         conn = sqlite3.connect("db.sqlite3")
         c = conn.cursor()
         # call this funciton with note_id to get the tags associated with the note
-        res = c.execute("select * from notes_note_meta where note_id = "+str(note_id))
+        res = c.execute("select note_id, tags, title from notes_note_meta where note_id = "+str(note_id))
         for r in res:
             temp = r[1]
             temp2 = r[2]
@@ -189,7 +199,7 @@ class CoreOps:
         c = conn.cursor()
         # call this fucntion to get the tags that are associateaad to each user based on the notes he viewed
         print("getting tags for user")
-        res = c.execute("select * from notes_user_meta WHERE user_id = "+str(user_id))
+        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id = "+str(user_id))
         tags=""
         for r in res:
             tags = r[1]+"~"+r[2]
@@ -215,7 +225,7 @@ class CoreOps:
         stop_words.update(
             ["-", '.', ',', '"', "'", '?', '!', ':', ';', '(', ')', '[', ']', '{', '}', 'geturl', 'logs', 'mouseover',
              'home', 'javatagged',
-             '~', '&', '>', '<', "/", "''", 'name', 'data', "..."])
+             '~', '&', '>', '<', "/", "''", 'name', 'data', "...", '1', '2', '3', '4', '5', '6', '7', '8', '9'])
         soup = BeautifulSoup(st, "lxml")
         st = " ".join(soup.findAll(text=True))
         words = word_tokenize(st)
@@ -228,7 +238,7 @@ class CoreOps:
 
             return_list.append(k[0])
 
-        print(return_list)
+        # print(return_list)
         fin = '~'.join(return_list)
         fin = fin.replace("'","")
         print(fin)

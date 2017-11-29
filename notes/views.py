@@ -55,6 +55,10 @@ def mynotes(request):
 
 def NoteDetail(request, pk):
     obj.userOpenedNote(request.user.get_username(), pk)
+    # updates your tags , call only when user openes others notes
+    CB_title_tags, CB_note_tags = obj.getCBforNote(pk)
+    # for any note, results will contain mynotes also, filter it
+
     n = notes.objects.get(noteid=pk)
     try:
         lm = Likes.objects.filter(noteid=pk)
