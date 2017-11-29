@@ -57,7 +57,7 @@ class CoreOps:
         res = c.execute("select note_id, tags, title from notes_note_meta where note_id != "+str(note_id))
         for r in res:
             # print(r)
-            print(r[0])
+            # print(r[0])
             noteid = r[0]
             # r1 =""
             # r2 =""
@@ -151,23 +151,16 @@ class CoreOps:
 
 
 
-    def saveTheNote(self, note_id, note_text):
+    def saveTheNote(self, note_id, note_title, note_text):
         conn = sqlite3.connect("db.sqlite3")
         c = conn.cursor()
         # call this function when the note is created or existing note is edited
         print("getting the tags from the updated user note")
         note_tags = self.getTagsFromString(note_text)
-        tag_list = []
-        for tag in note_tags:
-            # print(tag[1])
-            tag_list.append(tag[1])
-        temp_str = "', '".join(tag_list)
-        if len(tag_list)<5:
-            temp_str = temp_str ="'"+temp_str +"'"+(" ,'NA' "*(5 -len(tag_list)))
-        else:
-            temp_str ="'"+temp_str +"'"
-        # print(str(note_id)+" , "+temp_str)
-        c.execute("insert or replace into notes_note_meta (note_id, tag1, tag2, tag3, tag4, tag5) VALUES ("+str(note_id)+" , "+temp_str+" )")
+        title_tags = self.getTagsFromString(note_title)
+        # note_tags = note_tags.split("~")
+        # title_tags = title_tags.split("~")
+        c.execute("insert or replace into notes_note_meta (note_id, tags, title) VALUES ("+str(note_id)+" , '"+note_tags+"' , '"+title_tags+"' )")
         conn.commit()
         c.close()
         conn.close()
@@ -186,7 +179,7 @@ class CoreOps:
                 temp = ""
             if str(r[2]).isdigit():
                 temp2 = ""
-            print(r[1].split("~"))
+            # print(r[1].split("~"))
             c.close()
             conn.close()
             return list(temp2.split("~")), list(temp.split("~"))

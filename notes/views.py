@@ -24,6 +24,7 @@ def register(request):
 
 @login_required
 def home(request):
+    # user_tags = obj.getCBforUser(request.user.get_username())
     all_public_notes = notes.objects.filter(type=0).order_by('date')
     user_notes = notes.objects.filter(username=request.user.get_username()).order_by('-date')[:4]
     tagged_notes = TagNotes.objects.all().order_by('-date')
@@ -79,13 +80,19 @@ def NoteDetail(request, pk):
 
 
 def NoteCreate(request):
+
     tagged_notes = TagNotes.objects.all().order_by('-date')
     if request.method == 'POST':
         title = request.POST.get('title')
         content = request.POST.get('content')
         type = request.POST.get('type')
+        date_time = datetime.now()
+        tagged_notes = TagNotes.objects.all().order_by('-date')
         notes.objects.create(type=type, username=request.user.get_username(), authorid=request.user.get_username(),
-                             title=title, content=content, date=datetime.now())
+                             title=title, content=content, date=date_time)
+        temp = notes.objects.get(authorid=request.user.get_username(),
+                             title=title, content=content, date=date_time)
+        obj.saveTheNote(temp.noteid, title, content)
         return redirect('mynotes')
     else:
         return render(request, 'create_note.html', {'navbar': 'note_create','tagged_notes': tagged_notes})
