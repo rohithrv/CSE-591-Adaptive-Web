@@ -287,6 +287,7 @@ class CoreOps:
         st = " ".join(soup.findAll(text=True))
         words = word_tokenize(st)
         for word in words:
+
             if word not in stop_words and (not word.isdigit()) and len(word) >2:
                 token_list.append(word.lower())
         key_words = Counter(token_list).most_common(5)
