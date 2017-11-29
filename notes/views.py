@@ -59,6 +59,7 @@ def CheatSheet(request):
     context = {'tagged_notes':tagged_notes,'navbar': 'cheatsheet'}
     return render(request,'cheatsheet.html',context)
 
+
 def NoteDetail(request, pk):
     obj.userOpenedNote(request.user.get_username(), pk)
     # updates your tags , call only when user openes others notes
