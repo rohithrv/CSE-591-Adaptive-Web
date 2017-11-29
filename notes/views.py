@@ -41,6 +41,13 @@ def home(request):
                'user_notes': user_notes}
     return render(request, 'new_home.html', context)
 
+def displayUserProfile(request):
+    user_name = request.user.get_username()
+    context = {}
+    if request.method == "POST":
+        tags = request.POST.get('tags')
+        print(tags)
+    return render(request, 'profilePage.html', context)
 
 @login_required
 def mynotes(request):

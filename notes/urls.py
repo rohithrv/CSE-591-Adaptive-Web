@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^logout/$',aviews.logout, {'next_page': 'login'}, name='logout'),
     url(r'^register/$', myviews.register, name='register'),
     # url(r'^summernote/', include('django_summernote.urls')),
+    url(r'^profile/$', myviews.displayUserProfile, name='profile'),
 ]
 
 # if settings.DEBUG:

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+{#{% extends 'base.html' %}#}
+{% load static %}
+<html lang="en">
+<head>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{% static 'bootstrap-tagsinput.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rainbow/1.2.0/themes/github.css">
+
+  </head>
+
+<script>
+            $('#first_page').keypress(function(e) {
+              if (e.keyCode == '13') {
+                 e.preventDefault();
+                 //your code here
+               }
+            });​
+        </script>
+
+  <body>
+<form role="form"  id="first_page" method="post" >
+    {% csrf_token %}
+    {%block content%}
+    <div class="bs-example">
+            <input style="font-size: 5%" name = "tags" type="text" value="Amsterdam,Washington,Sydney,Beijing,Cairo" data-role="tagsinput" />
+          </div>
+    <button type="">Save Preferences</button>
+</form>
+
+
+{% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.min.js"></script>
+    <script src="{% static 'bootstrap-tagsinput.min.js' %}"></script>
+
+  </body>
+</html>
