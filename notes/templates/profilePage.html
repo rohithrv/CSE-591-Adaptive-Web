@@ -25,7 +25,8 @@
     {% csrf_token %}
     {%block content%}
     <div class="bs-example">
-            <input style="font-size: 5%" name = "tags" type="text" value="Amsterdam,Washington,Sydney,Beijing,Cairo" data-role="tagsinput" />
+
+            <input style="font-size: 5%" name = "tags" type="text" value="{% for t in tags %}{{ t }} ,  {% endfor %}" data-role="tagsinput" />
           </div>
     <button type="">Save Preferences</button>
 </form>

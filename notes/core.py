@@ -140,6 +140,7 @@ class CoreOps:
         tags = ','.join(note_tags)+"," + tags
         t_tags = ','.join(title_tags)+", " + str(t_tags)
 
+
         tags = tags.replace(",","~")
         t_tags = t_tags.replace(",","~")
         # print(tags)
@@ -192,7 +193,7 @@ class CoreOps:
         conn = sqlite3.connect("db.sqlite3")
         c = conn.cursor()
         # call this fucntion to get the tags that are associateaad to each user based on the notes he viewed
-        print("getting tags for user")
+        print("getting tags for user "+user_id)
         res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id = "+str(user_id))
         tags=""
         for r in res:

@@ -47,6 +47,8 @@ def displayUserProfile(request):
     if request.method == "POST":
         tags = request.POST.get('tags')
         print(tags)
+    tags = obj.getTagsForUser(request.user.get_username())
+    context  = {"tags": tags}
     return render(request, 'profilePage.html', context)
 
 @login_required
