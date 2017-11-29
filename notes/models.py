@@ -22,10 +22,20 @@ class userRating(models.Model):
     userrating = models.PositiveIntegerField()
 
 
+class CheatSheet(models.Model):
+    user_id = models.CharField(max_length=100)
+    note_id = models.PositiveIntegerField(primary_key=True)
+    cheatsheet_title = models.CharField(max_length=100, default=" ")
+    title = models.CharField(max_length=100, default=" ")
+    content = models.CharField(max_length=10000)
+    date = models.DateTimeField(default=datetime.now)
+
+
 class user_meta(models.Model):
-    user_id = models.PositiveIntegerField(primary_key=True)
+    user_id = models.CharField(primary_key=True,max_length=100)
     tags = models.CharField(max_length=5000, default=" ")
     titles = models.CharField(max_length=1000, default=" ")
+    date = models.DateTimeField(default=datetime.now)
 
 class note_meta(models.Model):
     note_id = models.PositiveIntegerField(primary_key=True)

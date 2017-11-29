@@ -9,6 +9,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^home/$', myviews.home, name='home'),
     url(r'^mynotes/$', myviews.mynotes, name='mynotes'),
+    url(r'^cheatsheet/$', myviews.CheatSheet, name='cheatsheet'),
     url(r'^notes/add/$', myviews.NoteCreate, name='note_create'),
     url(r'^notes/(?P<pk>[0-9]+)/$', myviews.NoteDetail, name='note_view'),
     url(r'^notes/(?P<pk>[0-9]+)/update/$', myviews.NoteEdit, name='note_update'),
