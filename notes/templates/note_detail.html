@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card" style=" margin: 10%; height: 100%;">
+  <div class="card-block">
+    <h4 class="card-title">{{ notes.title |safe }}   <small style="font-size: 13px; color: darkgrey;">    {{ notes.date }}</small></h4>
+    <h6 class="card-subtitle mb-2 text-muted">Author:{{ notes.username }}</h6>
+    <p class="card-text">{{notes.content |safe}}</p>
+    {% if notes.username == user.username %}
+    <a href="{% url 'note_update' notes.noteid %}" class="card-link">Edit</a>
+    <a href="{% url 'note_delete' notes.noteid %}" class="card-link">Delete</a>
+    {% endif %}
+
+    {% if notes.tagged == 0 %}
+    <a href="{% url 'note_tag' notes.noteid %}" class="card-link">Tag</a>
+    {% else %}
+    <a href="{% url 'note_untag' notes.noteid %}" class="card-link">Remove Tag</a>
+    {% endif %}
+
+    {% if notes.username != user.username %}
+    {% if Likes == None %}
+    <a href="{% url 'note_upvote' notes.noteid %}" class="card-link">
+    <i class="fa fa-chevron-up fa-lg" style="color: green;" aria-hidden="true"></i>
+    </a>
+    <a class="btn" style="padding: 0px 3px 0px 3px; color: black;   margin-right: 5px;">{{ notes.upvote }}</a>
+
+    <a href="{% url 'note_downvote' notes.noteid %}" class="card-link">
+    <i class="fa fa-chevron-down fa-lg" style="color: darkred;" aria-hidden="true"></i>
+    </a>
+    <a class="btn" style="padding: 0px 3px 0px 3px; color: black; ">{{ notes.downvote }}</a>
+    {% else %}
+    <a  class="card-link" style="color: grey;">Upvotes:</a>
+    <a class="card-link" style=" color: green;   margin: 0px 0px 0px 0px;">{{ notes.upvote }}</a>
+    <a  class="card-link" style="color: grey;">Downvotes:</a>
+    <a class="card-link" style=" color: red; margin: 0px 0px 0px 0px;">{{ notes.downvote }}</a>
+    {% endif %}
+    {% endif %}
+    {% if notes.username == user.username %}
+    <a  class="card-link" style="color: grey;">Upvotes:</a>
+    <a class="card-link" style=" color: green;   margin: 0px 0px 0px 0px;">{{ notes.upvote }}</a>
+    <a  class="card-link" style="color: grey;">Downvotes:</a>
+    <a class="card-link" style=" color: red; margin: 0px 0px 0px 0px;">{{ notes.downvote }}</a>
+
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+.sidebar{
+position: fixed;
+top: 40px;
+background-color: whitesmoke;
+overflow-y: scroll;
+bottom: 0;
+left: 0;
+z-index: 1030;
+padding: 20px 0;
+border-right: 1px solid #eee;
+
+}
+.nav-card{
+width: 235px;
+height: 200px;
+margin-left: 3px;
+background-color: white;
+}
+.body-card{
+
+width: 238px;
+height: 200px;
+margin: 10px;
+background-color: #FFFFF0;
+}
+.card-text-new{
+overflow-x: scroll;
+overflow-y: hidden;
+width: 212px;
+height: 130px;
+font-size: small;
+
+}
+.headings{
+font-family: "Times New Roman", Times, serif;
+z-index: 2000;
+width: 90%;
+border-bottom: 1px solid #eee;
+padding-top: 13px;
+padding-bottom: 5px;
+}
+.heading-below-text{
+padding: 13px 10px 0px 10px;
+}
+.card-title-modify{
+font-size: larger;
+}
+.type{
+font-size: smaller;
+float: right;
+padding: 1px;
+}
+.link-style{
+color: black;
+}
+</style>
+<div class="container" >
+    <div class="row" >
+    {% include "sidebar.html" %}
+<!-- main content -->
+<div class="col-sm-9 col-md-11 col-lg-11" style="float: left; padding-top: 57px; padding-right: 0;">
+<!--<center><button type="button" class="btn btn-secondary btn-lg" disabled>Welcome back {{user.username}}</button></center>-->
+<h4 class="headings">Recents,</h4>
+<div class="row heading-below-text" >
+{% for n in user_notes %}
+            <div class="card body-card" >
+              <a class="card-link link-style" href="{% url 'note_view' n.noteid  %}">
+                <div class="card-block" style="">
+                    <h4 class="card-title card-title-modify">{{ n.title | safe |striptags}} </h4>
+
+                    <p class="card-text card-text-new"> {{ n.content | safe |striptags}} </p>
+                </div></a>
+              </div>
+{% endfor %}
+</div>
+
+<h4 class="headings" style=" ">Suggestions,</h4>
+<div class="row heading-below-text" >
+{% for n in all_notes %}
+
+     <div class="card body-card" >
+              <a class="card-link link-style" href="{% url 'note_view' n.noteid  %}">
+                <div class="card-block" style="">
+                    <h4 class="card-title card-title-modify">{{ n.title | safe |striptags}} </h4>
+
+                    <p class="card-text card-text-new"> {{ n.content | safe |striptags |truncatewords:20}} </p>
+                </div></a>
+              </div>
+{% endfor %}
+</div>
+</div>
+</div>
+      </div>
+
+
+
+{% endblock %}

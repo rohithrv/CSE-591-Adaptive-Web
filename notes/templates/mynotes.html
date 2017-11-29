@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+
+.sidebar{
+    position: fixed;
+    top: 40px;
+    background-color: ghostwhite;
+    overflow-y: scroll;
+    bottom: 0;
+    left: 0;
+    z-index: 1030;
+    padding: 20px 0;
+    border-right: 1px solid #eee;
+
+}
+.nav-card{
+width: 235px;
+height: 200px;
+margin-left: 3px;
+background-color: whitesmoke;
+}
+.body-card{
+width: 238px;
+height: 200px;
+margin: 10px;
+background-color: #FFFFF0;
+}
+.card-text-new{
+width: 212px;
+height: 130px;
+font-size: small;
+overflow: scroll;
+}
+.headings{
+position: fixed;
+font-family: "Times New Roman", Times, serif;
+background-color: white;
+z-index: 2000;
+width: 75%;
+border-bottom: 1px solid #eee;
+padding-top: 13px;
+padding-bottom: 5px;
+}
+.heading-below-text{
+padding: 45px 10px 0px 10px;
+}
+.card-title-modify{
+font-size: larger;
+}
+.type{
+font-size: smaller;
+float: right;
+padding: 1px;
+}
+.link-style{
+color: black;
+}
+
+</style>
+<div class="container" >
+    <div class="row" >
+    <!-- sidebar starts here -->
+    {% include "sidebar.html" %}
+<!-- sidebar ends here -->
+
+    <div class="col-sm-9 col-md-11 col-lg-11" style="float: left; padding-top: 57px; padding-right: 0;">
+        <h4 class="headings">My notes,</h4>
+        <div class="row heading-below-text">
+              <div class="card body-card" >
+              <a class="card-link link-style" href="{% url 'note_create' %}">
+                <div class="card-block" style="">
+                    <h4 class="card-title card-title-modify"></h4>
+                    <p class="card-text card-text-new"> <i class="fa fa-plus fa-4x" style="margin-top: 20%;margin-left: 35%; color: antiquewhite;" aria-hidden="true"></i> </p>
+                </div></a>
+              </div>
+
+            {% for n in notes %}
+            {% if n.type == 0 %}
+              <div class="card body-card" >
+              <a class="card-link link-style" href="{% url 'note_view' n.noteid  %}">
+                <div class="card-block" style="">
+
+                <button type="button " class="btn btn-success btn-xs type"> <i  class="fa fa-unlock" aria-hidden="true"></i></button>
+                    <h4 class="card-title card-title-modify">{{ n.title|safe |striptags}} </h4>
+
+                    <p class="card-text card-text-new"> {{ n.content|safe |striptags}} </p>
+                </div></a>
+              </div>
+
+              {% else %}
+              <div class="card body-card" >
+              <a class="card-link link-style" href="{% url 'note_view' n.noteid  %}">
+                <div class="card-block" style="">
+                <button type="button" class="btn btn-warning btn-xs type"><i class="fa fa-lock" aria-hidden="true"></i></button>
+                    <h4 class="card-title card-title-modify">{{ n.title|safe |striptags}} </h4>
+
+                    <p class="card-text card-text-new"> {{ n.content|safe  |striptags}} </p>
+
+                </div></a>
+              </div>
+                {% endif %}
+            {% endfor %}
+
+        </div>
+
+    </div>
+  </div>
+
+</div>
+
+
+{% endblock %}

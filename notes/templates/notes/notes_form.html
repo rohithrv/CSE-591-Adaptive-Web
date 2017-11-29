@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h4 style="padding-top: 55px;">{{ notes.username }}</h4>
+    <form class="form-horizontal" action="" method="post" enctype="multiport/form-data">
+    {% csrf_token %}
+    {% include 'form_temp.html' %}
+    <div class="form-group">
+    <button type="submit" class="btn btn-success" >Submit</button>
+</div>
+
+    </form>
+<h4>{{ notes.title }}</h4>
+<body>{{notes.content}}</body>
+
+{% endblock %}

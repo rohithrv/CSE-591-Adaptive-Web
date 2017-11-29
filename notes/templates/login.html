@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>QuizWhiz</title>
+	<meta charset="utf-8" />
+	{% load staticfiles %}
+
+	<meta name="viewport" content = "width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<style>
+
+.myfixed{
+position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1050;
+}
+</style>
+	<!--navbar starts here -->
+    <nav class=" n navbar navbar-inverse bg-primary navbar-expand-md navbar-toggleable-md navbar-default navbar-fixed-top bg-faded myfixed" style="background-color: dodgerblue;">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#">QuizWhiz</a>
+</nav>
+
+    <!--navbar ends here -->
+</head>
+<body style="padding-top: 10%; padding-left: 10%;">
+
+    {% if form.errors %}
+    <center><p style="color: red">Please check your Credentials!!</p></center>
+    {% endif %}
+<div class="container" id="login" style="padding-left: 400px; padding-right:400px; padding-top: 50px;">
+    	<div class="row" >
+
+<form  method="post" action="{% url 'login' %}">{% csrf_token %}
+
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input type="text" class="form-control" placeholder="Enter username" id="username" name="username" >
+    <small  class="form-text text-muted">  </small>
+  </div>
+
+  <div class="form-group">
+    <label for="password">Password</label>
+   <input type="password" class="form-control"  placeholder="Enter Password"  name="password" id="password">
+  </div>
+
+
+
+<button class="btn btn-primary btn active" type="submit" aria-pressed="true" value="{{ next }}">Sign in</button>
+<a href="{% url 'register' %}" class="btn btn-secondary btn active" role="button" >Register</a>
+</form>
+
+			</div>
+			</div>
+	</body>
+</html>

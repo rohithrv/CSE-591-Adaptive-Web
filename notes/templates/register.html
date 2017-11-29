@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+	<body >
+
+		<div class="container"  >
+
+
+<form method="post" >
+{% csrf_token %}
+<center><h4 style="color: darkblue;" >Register Here!</h4></center>
+    <div class="form-row" >
+      <div class="form-group col-md-6">
+      <label for="userid" class="col-form-label">Username</label><input type="text" class="form-control" name="userid" placeholder="Create Username">
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="pwd" class="col-form-label">Password</label>
+     <input type="password" class="form-control" name="pwd" placeholder="Create Password">
+     </div>
+
+      <center><button type="submit" value="Register" class="btn btn-primary">Register</button></center>
+     </div>
+</form>
+
+	</div></body>
+
+{% endblock %}
