@@ -53,6 +53,12 @@ def mynotes(request):
     return render(request, 'mynotes.html', context)
 
 
+def CheatSheet(request):
+    c = CheatSheet.objects.filter()
+    tagged_notes = TagNotes.objects.all().order_by('-date')
+    context = {'tagged_notes':tagged_notes,'navbar': 'cheatsheet'}
+    return render(request,'cheatsheet.html',context)
+
 def NoteDetail(request, pk):
     obj.userOpenedNote(request.user.get_username(), pk)
     # updates your tags , call only when user openes others notes
@@ -77,7 +83,6 @@ def NoteCreate(request):
         title = request.POST.get('title')
         content = request.POST.get('content')
         type = request.POST.get('type')
-        tagged_notes = TagNotes.objects.all().order_by('-date')
         notes.objects.create(type=type, username=request.user.get_username(), authorid=request.user.get_username(),
                              title=title, content=content, date=datetime.now())
         return redirect('mynotes')
