@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import html
 from collections import Counter
 from nltk.tokenize import sent_tokenize, word_tokenize
-
+import json
 class CoreOps:
     # def __init__(self):
         # init create a connection and a cursor object
@@ -131,16 +131,41 @@ class CoreOps:
 
         similar_users = self.getTopFromCounter(full_user_list, 10)
         print(similar_users)
+        c.close()
+        conn.close()
         return similar_users
 
 
 
-        c.close()
-        conn.close()
+
 
 
     def getCFforUser(self, user_id):
         print("get notes from similar users")
+        print(user_id)
+        similar_users = self.getSimilarUsers(user_id)
+        final_tags = []
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
+        res1 = c.execute("select note_id, tags, title from notes_note_meta")
+        for s_user in similar_users:
+            user_tags = self.getTagsForUser(s_user)
+            for r in res1:
+                # print(r)
+                noteid = r[0]
+                if type(r[2]) != int:
+                    t_tags = r[2].split("~")
+                tags = r[1].split("~")
+                for t in user_tags:
+                    if t in tags:
+                        final_tags.append(noteid)
+                    if type(r[2]) != int:
+                        if t in t_tags:
+                            final_tags.append(noteid)
+                            final_tags.append(noteid)
+        final_tags = self.getTopFromCounter(final_tags, 10)
+        print(final_tags)
+        return final_tags
 
 
     def userOpenedNote(self,user_id, note_id):
@@ -254,6 +279,7 @@ class CoreOps:
         c.close()
         conn.close()
         return top_tags
+
     # return the top 10 tags for the user, call this fucntion dynamically when you need to get the tags for an user
     def getMostusedTags(self):
         full_list = []
@@ -271,6 +297,44 @@ class CoreOps:
         c.close()
         conn.close()
         return res_tags
+
+    def getSubtags(self, li):
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
+        res = c.execute("select title, tags from notes_note_meta where tags like '%"+li+"%'")
+        temp_tags = []
+        for r in res:
+            tags = r[0]+"~"+r[0]+"~"+r[1]
+            temp_tags.append(tags)
+        temp_tags = self.getTopFromCounter(temp_tags, 30)
+        # temp_tags.remove(li)
+        c.close()
+        conn.close()
+        return temp_tags
+
+
+
+    def genJSON(self):
+        # tags = self.getMostusedTags()
+        data = {}
+        data['children'] =[]
+        tags = self.getMostusedTags()
+        i = 0
+        for t in tags[1:]:
+            child_tags = self.getSubtags(t)
+            children = []
+            for c in child_tags:
+                children.append({
+                    'name':c,
+                    'size':1
+                })
+            data['children'].append({
+                'name': t,
+                'size': 1,
+                'children':children
+            })
+        json_str = json.dumps(data)
+        print(json_str)
 
 
 
@@ -304,9 +368,11 @@ class CoreOps:
         return fin
 
 obj = CoreOps()
+obj.genJSON()
 # obj.getTgasForAllNotes()
 # obj.getMostusedTags()
-obj.getSimilarUsers(2)
+# obj.getSimilarUsers(2)
+# obj.getCFforUser("2")
 
 # obj.getCBforNote(419)
 # print(obj.getCBforUser(12))
