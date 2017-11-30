@@ -81,7 +81,33 @@ color: black;
     <a class="card-link" style=" color: red; margin: 0px 0px 0px 0px;">{{ notes.downvote }}</a>
 
     {% endif %}
+    <div class="btn-group dropdown"style="margin-left: 15px;">
+  <button class="btn btn-secondary dropdown-toggle" style="padding: 5px; color: dimgrey;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Add to cheatsheet
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+  {% for b in c %}
+  {% if b.user_id == user.username %}
+  {% if not cn %}
+    <a class="dropdown-item" href="{% url 'addtocheat' b.cheatsheet_title notes.noteid %}">{{ b.cheatsheet_title }}</a>
+   {% for cnn in cn %}
 
+   {% if cnn.cheatsheet_title == b.cheatsheet_title %}
+
+   {% if cnn.note_id == notes.noteid %}
+    <a class="dropdown-item" style="background-color: lawngreen;">{{ b.cheatsheet_title }} (added)</a>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+    {% else %}
+    <a class="dropdown-item" href="{% url 'addtocheat' b.cheatsheet_title notes.noteid %}" style="background-color: brown;">{{ b.cheatsheet_title }}</a>
+
+
+    {% endif %}
+    {% endif %}
+   {% endfor %}
+  </div>
+</div>
   </div>
   <!-- Similar notes imp-->
 </div>
@@ -115,6 +141,9 @@ color: black;
 </div>
 {% endif %}
 {% endfor %}
+
+
+
 </div>
 
 {% endblock %}

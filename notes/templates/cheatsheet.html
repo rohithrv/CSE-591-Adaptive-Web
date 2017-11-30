@@ -22,16 +22,9 @@ background-color: white;
 }
 .body-card{
 
-width: 238px;
-height: 200px;
-margin: 10px;
-background-color: #FFFFF0;
 }
 .card-text-new{
-overflow-x: scroll;
-overflow-y: hidden;
-width: 212px;
-height: 130px;
+
 font-size: small;
 
 }
@@ -58,9 +51,49 @@ padding: 1px;
 color: black;
 }
 </style>
+<div class="container" >
+
 {% include "sidebar.html" %}
 
-<div class="col-sm-9 col-md-11 col-lg-11" style="float: left; padding-top: 57px; padding-right: 0;">
+<div class="" style=" margin-top: 60px; margin-left: 10%; margin-right: 100px;">
+<form class="form-group row" method='POST' action='' >
+{% csrf_token %}
+  <!--<label for="example-text-input" class="col-3 col-form-label" >Create Cheatsheet:</label>-->
+  <div class="col-9">
+    <input class="form-control" type="text" value="" name="ctitle" style="margin-left: 200px;"  placeholder="Create new cheatsheet">
+    <button type="submit" class="btn btn-primary" style="margin-top: 5px;  margin-left: 200px;">Submit</button>
+    </div>
+    </form>
+
 
 </div>
+<div style=" margin-left: 10%;">
+<div class="col" style=" ">
+{% for a in c %}
+<div class="card" style="margin-bottom: 10px; ">
+  <div class="card-block">
+    <h4 class="card-title">{{ a.cheatsheet_title }}</h4>
+    <p class="card-text"></p>
+    {% for b in cn %}
+        {% if a.cheatsheet_title == b.cheatsheet_title %}
+        {% for na in n %}
+        {% if b.note_id == na.noteid %}
+
+            <div class="card body-card">
+              <a class="card-link link-style" href="{% url 'note_view' na.noteid  %}">
+                <div class="card-block" style="">
+                    <h4 class="card-title card-title-modify">{{ na.title | safe }} </h4>
+
+                    <p class="card-text card-text-new"> {{ na.content | safe }} </p>
+                </div></a>
+              </div>
+              {% endif %}
+              {% endfor %}
+        {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+</div>
+</div></div>
 {% endblock %}

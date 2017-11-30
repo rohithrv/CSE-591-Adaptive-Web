@@ -88,10 +88,16 @@ def Discover(request):
     return render(request,'discover.html', {'notes': all_public_notes,'navbar': 'discover'})
 
 
-def CheatSheet(request):
-    c = CheatSheet.objects.filter(user_id=request.user.get_username())
+def Cheatsheet(request):
+    cn = CheatSheet.objects.all()
+    c = CheatSheets.objects.all()
     tagged_notes = TagNotes.objects.all().order_by('-date')
-    context = {'tagged_notes': tagged_notes, 'navbar': 'cheatsheet', 'c': c}
+    n = notes.objects.all()
+    if request.method == "POST":
+        ctitle = request.POST.get('ctitle')
+        CheatSheets.objects.create(cheatsheet_title=ctitle, user_id=request.user.get_username())
+        return redirect('cheatsheet')
+    context = {'tagged_notes': tagged_notes, 'navbar': 'cheatsheet', 'c': c, 'cn': cn, 'n': n}
     return render(request, 'cheatsheet.html', context)
 
 
@@ -103,16 +109,26 @@ def NoteDetail(request, pk):
     title_rec = notes.objects.filter(noteid__in=CB_title_tags, type=0)
     content_rec = notes.objects.filter(noteid__in=CB_note_tags, type=0)
     n = notes.objects.get(noteid=pk)
+    c = CheatSheets.objects.all()
+    try:
+        cn = CheatSheet.objects.filter(note_id=pk)
+    except CheatSheet.DoesNotExist:
+        cn = None
     try:
         lm = Likes.objects.filter(noteid=pk)
 
     except Likes.DoesNotExist:
         lm = None
     if not lm:
-        context = {'notes': n, 'Likes': None, 'title_rec': title_rec, 'content_rec': content_rec}
+        context = {'notes': n, 'Likes': None, 'title_rec': title_rec, 'content_rec': content_rec,'c': c, 'cn': cn}
     else:
-        context = {'notes': n, 'Likes': lm, 'title_rec': title_rec, 'content_rec': content_rec}
+        context = {'notes': n, 'Likes': lm, 'title_rec': title_rec, 'content_rec': content_rec, 'c': c, 'cn': cn}
     return render(request, 'note_detail.html', context)
+
+
+def AddToCheat(request,id,pk):
+    CheatSheet.objects.create(user_id=request.user.get_username(), cheatsheet_title=id, note_id=pk, date=datetime.now())
+    return redirect('note_view', pk=pk)
 
 
 def NoteCreate(request):

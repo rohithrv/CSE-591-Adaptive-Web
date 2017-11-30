@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-	<title>QuizWhiz</title>
+	<title>Study Genie</title>
 	<meta charset="utf-8" />
 	{% load staticfiles %}
     {% load static %}
@@ -28,7 +28,7 @@ position: fixed;
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" href="#">QuizWhiz</a>
+  <a class="navbar-brand" href="#">StudyGenie</a>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
@@ -41,8 +41,8 @@ position: fixed;
       <li class="{% if navbar == 'discover' %}active{% endif %}">
        <a class="nav-link" style="color: aquamarine;" href="{% url 'discover' %}">Discover</a>
       </li>
-      <li>
-        <a class="nav-link" href="#">Create cheat-sheet</a>
+      <li class="{% if navbar == 'cheatsheet' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'cheatsheet' %}">Create cheat-sheet</a>
       </li>
 
     </ul>
