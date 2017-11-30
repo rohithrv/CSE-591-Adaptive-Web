@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^mynotes/$', myviews.mynotes, name='mynotes'),
     url(r'^cheatsheet/$', myviews.CheatSheet, name='cheatsheet'),
     url(r'^notes/add/$', myviews.NoteCreate, name='note_create'),
+    url(r'^notes/discover/$', myviews.Discover, name='discover'),
     url(r'^notes/(?P<pk>[0-9]+)/$', myviews.NoteDetail, name='note_view'),
     url(r'^notes/(?P<pk>[0-9]+)/update/$', myviews.NoteEdit, name='note_update'),
     url(r'^notes/(?P<pk>[0-9]+)/tag/$', myviews.NoteTag, name='note_tag'),

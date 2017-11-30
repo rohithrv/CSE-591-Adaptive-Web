@@ -1,5 +1,6 @@
 from django.urls import reverse_lazy
 from django.db.models import Q
+from django.db.models import F
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as alogin
@@ -9,6 +10,8 @@ from notes.core import *
 from itertools import chain
 
 obj = CoreOps()
+
+
 # obj.getTgasForAllNotes()
 
 def register(request):
@@ -41,6 +44,7 @@ def home(request):
                'user_notes': user_notes}
     return render(request, 'new_home.html', context)
 
+
 def displayUserProfile(request):
     if request.method == "POST":
         print("-------POST________________")
@@ -72,11 +76,21 @@ def mynotes(request):
     return render(request, 'mynotes.html', context)
 
 
+def Discover(request):
+    all_public_notes = notes.objects.filter(type=0).order_by('date')
+    myquery = request.GET.get("query")
+    if myquery:
+        all_public_notes = all_public_notes.filter(Q(title__contains=myquery) |
+                                                   Q(content__contains=myquery)).distinct()
+
+    return render(request,'discover.html', {'notes': all_public_notes,'navbar': 'discover'})
+
+
 def CheatSheet(request):
-    c = CheatSheet.objects.filter()
+    c = CheatSheet.objects.filter(user_id=request.user.get_username())
     tagged_notes = TagNotes.objects.all().order_by('-date')
-    context = {'tagged_notes':tagged_notes,'navbar': 'cheatsheet'}
-    return render(request,'cheatsheet.html',context)
+    context = {'tagged_notes': tagged_notes, 'navbar': 'cheatsheet', 'c': c}
+    return render(request, 'cheatsheet.html', context)
 
 
 def NoteDetail(request, pk):
@@ -84,21 +98,21 @@ def NoteDetail(request, pk):
     # updates your tags , call only when user openes others notes
     CB_title_tags, CB_note_tags = obj.getCBforNote(pk)
     # for any note, results will contain mynotes also, filter it
-
+    title_rec = notes.objects.filter(noteid__in=CB_title_tags, type=0)
+    content_rec = notes.objects.filter(noteid__in=CB_note_tags, type=0)
     n = notes.objects.get(noteid=pk)
     try:
         lm = Likes.objects.filter(noteid=pk)
     except Likes.DoesNotExist:
         lm = None
     if not lm:
-        context = {'notes': n, 'Likes': None}
+        context = {'notes': n, 'Likes': None, 'title_rec': title_rec, 'content_rec': content_rec}
     else:
-        context = {'notes': n, 'Likes': lm}
+        context = {'notes': n, 'Likes': lm, 'title_rec': title_rec, 'content_rec': content_rec}
     return render(request, 'note_detail.html', context)
 
 
 def NoteCreate(request):
-
     tagged_notes = TagNotes.objects.all().order_by('-date')
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -109,11 +123,11 @@ def NoteCreate(request):
         notes.objects.create(type=type, username=request.user.get_username(), authorid=request.user.get_username(),
                              title=title, content=content, date=date_time)
         temp = notes.objects.get(authorid=request.user.get_username(),
-                             title=title, content=content, date=date_time)
+                                 title=title, content=content, date=date_time)
         obj.saveTheNote(temp.noteid, title, content)
         return redirect('mynotes')
     else:
-        return render(request, 'create_note.html', {'navbar': 'note_create','tagged_notes': tagged_notes})
+        return render(request, 'create_note.html', {'navbar': 'note_create', 'tagged_notes': tagged_notes})
 
 
 def NoteEdit(request, pk):
@@ -131,7 +145,8 @@ def NoteEdit(request, pk):
         edited_note.save()
         return redirect('mynotes')
     else:
-        return render(request, 'edit_note.html', {'navbar': 'note_update', 'mynote': mynote, 'tagged_notes': tagged_notes})
+        return render(request, 'edit_note.html',
+                      {'navbar': 'note_update', 'mynote': mynote, 'tagged_notes': tagged_notes})
 
 
 # def SearchQuery(request):

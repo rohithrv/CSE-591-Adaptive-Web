@@ -38,15 +38,18 @@ position: fixed;
       <li class="{% if navbar == 'mynotes' %}active{% endif %}">
         <a class="nav-link" href="{% url 'mynotes' %}">My notes</a>
       </li>
+      <li class="{% if navbar == 'discover' %}active{% endif %}">
+       <a class="nav-link" style="color: aquamarine;" href="{% url 'discover' %}">Discover</a>
+      </li>
       <li>
         <a class="nav-link" href="#">Create cheat-sheet</a>
       </li>
-      <li>
-      <li class="{% if navbar == 'note_create' %}active{% endif %}">
-        <a class="nav-link" href="{% url 'note_create' %}">New Note</a>
-      </li>
+
     </ul>
     <ul class="navbar-nav ml-auto">
+     <li class="{% if navbar == 'note_create' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'note_create' %}">New Note</a>
+      </li>
     <li>
         <a class="nav-link" href="{% url 'profile' %}">My Profile</a>
       </li>

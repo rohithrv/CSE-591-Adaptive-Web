@@ -1,7 +1,45 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+.similar_card{
+height: 250px;
+width: 280px;
+overflow: hidden;
+margin: 5px;
+}
 
+.card-text-new{
+overflow-x: scroll;
+overflow-y: hidden;
+width: 212px;
+height: 130px;
+font-size: small;
+
+}
+.headings{
+font-family: "Times New Roman", Times, serif;
+z-index: 2000;
+width: 90%;
+border-bottom: 1px solid #eee;
+padding-top: 13px;
+padding-bottom: 5px;
+}
+.heading-below-text{
+padding: 13px 10px 0px 10px;
+}
+.card-title-modify{
+font-size: larger;
+}
+.type{
+font-size: smaller;
+float: right;
+padding: 1px;
+}
+.link-style{
+color: black;
+}
+</style>
 <div class="card" style=" margin: 10%; height: 100%;">
   <div class="card-block">
     <h4 class="card-title">{{ notes.title |safe }}   <small style="font-size: 13px; color: darkgrey;">    {{ notes.date }}</small></h4>
@@ -46,6 +84,37 @@
 
   </div>
   <!-- Similar notes imp-->
+</div>
+<h5>Similar,</h5>
+<div class="row" style="margin-left: 150px;">
+
+{% for a in title_rec %}
+{% if a.username != user.username %}
+<div class="card similar_card">
+    <a class="card-link link-style" href="{% url 'note_view' a.noteid  %}">
+        <div class="card-block">
+            <h4 class="card-title card-title-modify">{{ a.title | safe |striptags}}</h4>
+            <p class="card-text card-text-new">{{ a.content | safe | striptags}}</p>
+        </div>
+    </a>
+    <a href="#" class="card-link" style=" ">Tag</a>
+</div>
+{% endif %}
+{% endfor %}
+
+{% for a in content_rec %}
+{% if a.username != user.username %}
+<div class="card similar_card">
+    <a class="card-link link-style" href="{% url 'note_view' a.noteid  %}">
+        <div class="card-block">
+            <h4 class="card-title card-title-modify">{{ a.title | safe |striptags}}</h4>
+            <p class="card-text card-text-new">{{ a.content | safe | striptags}}</p>
+        </div>
+    </a>
+    <a href="#" class="card-link" style=" ">Tag</a>
+</div>
+{% endif %}
+{% endfor %}
 </div>
 
 {% endblock %}
