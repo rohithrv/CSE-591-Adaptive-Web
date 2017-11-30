@@ -107,6 +107,7 @@ class CoreOps:
                         final_tags.append(noteid)
 
         final_tags = self.getTopFromCounter(final_tags, 10)
+        print(final_tags)
         c.close()
         conn.close()
         return final_tags

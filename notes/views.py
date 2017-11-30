@@ -24,7 +24,7 @@ def register(request):
 
 @login_required
 def home(request):
-    # user_tags = obj.getCBforUser(request.user.get_username())
+    user_tags = obj.getCBforUser(request.user.get_username())
     all_public_notes = notes.objects.filter(type=0).order_by('date')
     user_notes = notes.objects.filter(username=request.user.get_username()).order_by('-date')[:4]
     tagged_notes = TagNotes.objects.all().order_by('-date')
