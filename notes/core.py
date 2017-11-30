@@ -314,12 +314,12 @@ class CoreOps:
 
 
     def genJSON(self):
-        tags = self.getMostusedTags()
+        # tags = self.getMostusedTags()
         data = {}
         data['children'] =[]
         tags = self.getMostusedTags()
         i = 0
-        for t in tags:
+        for t in tags[1:]:
             child_tags = self.getSubtags(t)
             children = []
             for c in child_tags:
