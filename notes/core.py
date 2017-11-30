@@ -259,7 +259,7 @@ class CoreOps:
     #     returns a python list of all the tags associated with a note
 
 
-    def getTagsForUser(self, user_id):
+    def getTagsForUser(self, user_id, special = 0):
         conn = sqlite3.connect("db.sqlite3")
         c = conn.cursor()
         # call this fucntion to get the tags that are associateaad to each user based on the notes he viewed
@@ -268,6 +268,8 @@ class CoreOps:
         tags=""
         for r in res:
             tags = r[1]+"~"+r[2]
+        if special ==1:
+            return tags
         tags = tags.split("~")
         # print(tags)
         test = collections.Counter(tags).most_common(10)
@@ -313,6 +315,42 @@ class CoreOps:
         conn.close()
         return temp_tags[1:]
 
+    def getOSUMJson(self, user_id):
+        data = {}
+        data ['name'] = "User"
+        data['children'] = []
+        users = self.getSimilarUsers(str(user_id))
+        my_tags = self.getTagsForUser(str(user_id), 1)
+        my_tags = Counter(my_tags.split("~")).most_common(10)
+        sub_child = []
+        for t in my_tags:
+            sub_child.append({
+                'name': t[0],
+                'size': t[1]
+            })
+        data['children'].append({
+            'name': user_id,
+            'children': sub_child
+        })
+        for user in users:
+            sub_child = []
+            user_tags = self.getTagsForUser(str(user_id), 1)
+            user_tags = Counter(user_tags.split("~")).most_common(10)
+            for tag in user_tags:
+                # print(tag)
+                sub_child.append({
+                    'name':tag[0],
+                    'size':tag[1]
+                })
+            data['children'].append({
+                'name': user,
+                'children':sub_child
+            })
+        json_str = json.dumps(data)
+        f = open("notes/static/OSM.json", "w")
+        f.write(json_str)
+        f.close()
+
 
 
     def genJSON(self):
@@ -337,6 +375,9 @@ class CoreOps:
             })
         json_str = json.dumps(data)
         print(json_str)
+        f = open("notes/static/test.json", "w")
+        f.write(json_str)
+        f.close()
 
 
 
@@ -370,7 +411,8 @@ class CoreOps:
         return fin
 
 obj = CoreOps()
-obj.genJSON()
+obj.getOSUMJson(2)
+# obj.genJSON()
 # obj.getTgasForAllNotes()
 # obj.getMostusedTags()
 # obj.getSimilarUsers(2)
