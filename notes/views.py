@@ -35,7 +35,6 @@ def home(request):
     recomemended = sorted(
         chain(recomemended_cb, recomemended_cf),
         key=lambda instance: instance.date)
-    all_public_notes = notes.objects.filter(type=0).order_by('date')
     user_notes = notes.objects.filter(username=request.user.get_username()).order_by('-date')[:3]
     tagged_notes = TagNotes.objects.all().order_by('-date')
     myquery = request.GET.get("query")
@@ -43,10 +42,9 @@ def home(request):
     #     chain(all_public_notes, user_notes),
     #     key=lambda instance: instance.date)
     if myquery:
-        all_public_notes = all_public_notes.filter(Q(title__contains=myquery) |
+        recomemended = notes.objects.filter(Q(title__contains=myquery) |
                                                    Q(content__contains=myquery)).distinct()
-    context = {'all_notes': all_public_notes,
-               'tagged_notes': tagged_notes,
+    context = {'tagged_notes': tagged_notes,
                'navbar': 'home',
                'user_notes': user_notes,
                'r': recomemended,
