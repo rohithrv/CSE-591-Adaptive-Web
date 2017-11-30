@@ -88,6 +88,7 @@ def NoteDetail(request, pk):
     n = notes.objects.get(noteid=pk)
     try:
         lm = Likes.objects.filter(noteid=pk)
+
     except Likes.DoesNotExist:
         lm = None
     if not lm:
