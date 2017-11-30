@@ -80,7 +80,7 @@ color: black;
 
 <h4 class="headings" style=" ">Recommended for you,</h4>
 <div class="row heading-below-text" >
-{% for n in all_notes %}
+{% for n in r %}
 
      <div class="card body-card" >
               <a class="card-link link-style" href="{% url 'note_view' n.noteid  %}">
