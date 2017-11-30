@@ -130,16 +130,41 @@ class CoreOps:
 
         similar_users = self.getTopFromCounter(full_user_list, 10)
         print(similar_users)
+        c.close()
+        conn.close()
         return similar_users
 
 
 
-        c.close()
-        conn.close()
+
 
 
     def getCFforUser(self, user_id):
         print("get notes from similar users")
+        print(user_id)
+        similar_users = self.getSimilarUsers(user_id)
+        final_tags = []
+        conn = sqlite3.connect("db.sqlite3")
+        c = conn.cursor()
+        res1 = c.execute("select note_id, tags, title from notes_note_meta")
+        for s_user in similar_users:
+            user_tags = self.getTagsForUser(s_user)
+            for r in res1:
+                # print(r)
+                noteid = r[0]
+                if type(r[2]) != int:
+                    t_tags = r[2].split("~")
+                tags = r[1].split("~")
+                for t in user_tags:
+                    if t in tags:
+                        final_tags.append(noteid)
+                    if type(r[2]) != int:
+                        if t in t_tags:
+                            final_tags.append(noteid)
+                            final_tags.append(noteid)
+        final_tags = self.getTopFromCounter(final_tags, 10)
+        print(final_tags)
+        return final_tags
 
 
     def userOpenedNote(self,user_id, note_id):
@@ -305,7 +330,8 @@ class CoreOps:
 obj = CoreOps()
 # obj.getTgasForAllNotes()
 # obj.getMostusedTags()
-obj.getSimilarUsers(2)
+# obj.getSimilarUsers(2)
+obj.getCFforUser("2")
 
 # obj.getCBforNote(419)
 # print(obj.getCBforUser(12))
