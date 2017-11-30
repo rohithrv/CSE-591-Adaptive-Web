@@ -1,3 +1,4 @@
+{% load static %}
 <head>
     <style>
         body {
@@ -19,13 +20,59 @@
             dominant-baseline: middle;
             text-anchor: middle;
         }
-    </style>
+        .subBtn{
+        margin-left: 80%;
+        }
 
-    <script src='https://d3js.org/d3.v4.min.js'></script>
-    <script src='./js/jquery.min.js'></script>
-    <script src='./js/app.js'></script>
+        .node {
+  cursor: pointer;
+}
+
+.node:hover {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+.node--leaf {
+  fill: white;
+}
+
+.node--root,
+.node--leaf {
+  pointer-events: none;
+}
+path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+.dot {
+  stroke: #000;
+}
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+  font-size: 9px;
+}
+    </style>
+    <script src="{% static 'd3.v4.min.js' %}"></script>
+    <script src="{% static 'appScreen.js' %}"></script>
+    <script src="{% static 'jquery.min.js' %}"></script>
+
 </head>
 <body>
+<div class="visualScreen" id="visualScreenPart"></div>
+
+
     <script>
         const width = window.innerWidth,
             height = window.innerHeight,
@@ -61,13 +108,13 @@
             const perimeter = r * deltaAngle;
             return d.data.name.length * CHAR_SPACE < perimeter;
         };
-        const svg = d3.select('body').append('svg')
-            .style('width', '100vw')
-            .style('height', '100vh')
+        const svg = d3.select('#visualScreenPart').append('svg')
+            .style('width', '80vw')
+            .style('height', '80vh')
             .attr('viewBox', `${-width / 2} ${-height / 2} ${width} ${height}`)
-            .on('click', () => focusOn1()); // Reset zoom on canvas click
+            .on('click', () => focusOn()); // Reset zoom on canvas click
             
-        d3.json('flare2.json', (error, root) => {
+        d3.json("{% static 'test.json' %}", (error, root) => {
             if (error) throw error;
             root = d3.hierarchy(root);
             root.sum(d => d.size);
@@ -107,39 +154,22 @@
                 .attr('xlink:href', (_, i) => `#hiddenArc${i}` )
                 .text(d => d.data.name);
         });
-          
-        function focusOn1(d = { x0: 0, x1: 1, y0: 0, y1: 1 }) {
-        	alert("d-->MAIN  in Fn Focuus->"+d);
-            // Reset to top-level if no data point specified
-            const transition = svg.transition()
-                .duration(750)
-                .tween('scale', () => {
-                    const xd = d3.interpolate(x.domain(), [d.x0, d.x1]),
-                        yd = d3.interpolate(y.domain(), [d.y0, 1]);
-                    return t => { x.domain(xd(t)); y.domain(yd(t)); };
-                });
-            transition.selectAll('path.main-arc')
-                .attrTween('d', d => () => arc(d));
-            transition.selectAll('path.hidden-arc')
-                .attrTween('d', d => () => middleArcLine(d));
-            transition.selectAll('text')
-                .attrTween('display', d => () => textFits(d) ? null : 'none');
-            moveStackToFront(d);
-            //
-            function moveStackToFront(elD) {
-                svg.selectAll('.slice').filter(d => d === elD)
-                    .each(function(d) {
-                        this.parentNode.appendChild(this);
-                        if (d.parent) { moveStackToFront(d.parent); }
-                    })
-            }
-        }
             
         function focusOn(d = { x0: 0, x1: 1, y0: 0, y1: 1 }) {
-        	alert("d-->NEW SLICE Clicked in Fn Focuus->"+d.data.name);
-        	if(d.data.name != null){
-        		
+        	var searchString = "";
+        	if(d != null){
+        		if(d.parent != null && d.parent.data.name != "root"){
+        			searchString = d.parent.data.name;
+        		}
+        		searchString = searchString + " " + d.data.name;
         	}
+        	if(searchString != "root"){
+//        	    $('#inputBox').val(searchString);
+//        	    $('form#searchTagForm').submit();
+                $('#tagSearch').val("Serach: "+searchString);
+        	}
+
+
             // Reset to top-level if no data point specified
             const transition = svg.transition()
                 .duration(750)
@@ -165,4 +195,98 @@
             }
         }
     </script>
+
+    <div class="two-col">
+    <svg class="col1" width="600" height="610" id="consolidateChart"></svg>
+	<script>
+	var svg1 = d3.select("#consolidateChart"),
+	    margin = 20,
+	    diameter = +svg1.attr("width"),
+	    g = svg1.append("g").attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+
+	var color1 = d3.scaleLinear()
+	    .domain([-1, 5])
+	    .range(["hsl(152,80%,80%)", "hsl(228,30%,40%)"])
+	    .interpolate(d3.interpolateHcl);
+
+	var pack = d3.pack()
+	    .size([diameter - margin, diameter - margin])
+	    .padding(2);
+
+	d3.json("{% static 'OSM.json' %}", function(error, root) {
+	  if (error) throw error;
+
+	  root = d3.hierarchy(root)
+	      .sum(function(d) { return d.size; })
+	      .sort(function(a, b) { return b.value - a.value; });
+
+	  var focus = root,
+	      nodes = pack(root).descendants(),
+	      view;
+
+	  var circle = g.selectAll("circle")
+	    .data(nodes)
+	    .enter().append("circle")
+	      .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
+	      .style("fill", function(d) { return d.children ? color1(d.depth) : null; })
+	      .on("click", function(d) { if (focus !== d) zoom(d), d3.event.stopPropagation(); });
+
+	  var text = g.selectAll("text")
+	    .data(nodes)
+	    .enter().append("text")
+	      .attr("class", "label")
+	      .style("fill-opacity", function(d) { return d.parent === root ? 1 : 0; })
+	      .style("display", function(d) { return d.parent === root ? "inline" : "none"; })
+	      .text(function(d) { return d.data.name; });
+
+	  var node = g.selectAll("circle,text");
+
+	  svg1.style("background", color1(-1))
+	      .on("click", function() { zoom(root); });
+
+	  zoomTo([root.x, root.y, root.r * 2 + margin]);
+
+	  function zoom(d) {
+	    var focus0 = focus; focus = d;
+
+	    var transition = d3.transition()
+	        .duration(d3.event.altKey ? 7500 : 750)
+	        .tween("zoom", function(d) {
+	          var i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + margin]);
+	          return function(t) { zoomTo(i(t)); };
+	        });
+
+	    transition.select("#consolidateChart").selectAll("text")
+	      .filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
+	        .style("fill-opacity", function(d) { return d.parent === focus ? 1 : 0; })
+	        .on("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
+	        .on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
+	  }
+
+	  var tooltip = d3.select("body").append("div")
+		    .attr("class", "tooltip")
+		    .style("opacity", 0);
+
+
+	  function zoomTo(v) {
+	    var k = diameter / v[2]; view = v;
+	    node.attr("transform", function(d) { return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")"; });
+	    circle.attr("r", function(d) { return d.r * k; })
+	    			.on("mouseover", function(d) {
+				          tooltip.transition()
+				               .duration(200)
+				               .style("opacity", .9);
+				          tooltip.html("Relative Count:"+parseInt(d.r))
+				               .style("left", (d3.event.pageX + 5) + "px")
+				               .style("top", (d3.event.pageY - 28) + "px");
+				      })
+			      	.on("mouseout", function(d) {
+				          tooltip.transition()
+				               .duration(500)
+				               .style("opacity", 0);
+				      });
+	  }
+	});
+	</script>
+
 </body>
