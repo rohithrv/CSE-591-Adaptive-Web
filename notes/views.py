@@ -84,7 +84,7 @@ def Discover(request):
         myquery = myquery.lstrip("Search: ")
         print(myquery)
         l = myquery.split(" ")
-        print(l[0],l[1])
+        print(l[0], l[1])
         all_public_notes0 = all_public_notes.filter(Q(title__contains=l[0]) |
                                                    Q(content__contains=l[0])).distinct()
         all_public_notes1 = all_public_notes.filter(Q(title__contains=l[1]) |
