@@ -77,15 +77,22 @@ def mynotes(request):
 
 
 def Discover(request):
-    all_public_notes = notes.objects.filter(type=0).order_by('date')
+    all_public_notes = notes.objects.filter(type=0).order_by('upvote')
+    tagged_notes = TagNotes.objects.all().order_by('-date')
     myquery = request.GET.get("query")
     if myquery:
         myquery = myquery.lstrip("Search: ")
         print(myquery)
-        all_public_notes = all_public_notes.filter(Q(title__contains=myquery) |
-                                                   Q(content__contains=myquery)).distinct()
-
-    return render(request,'discover.html', {'notes': all_public_notes, 'navbar': 'discover'})
+        l = myquery.split(" ")
+        print(l[0],l[1])
+        all_public_notes0 = all_public_notes.filter(Q(title__contains=l[0]) |
+                                                   Q(content__contains=l[0])).distinct()
+        all_public_notes1 = all_public_notes.filter(Q(title__contains=l[1]) |
+                                                   Q(content__contains=l[1])).distinct()
+        all_public_notes = sorted(
+             chain(all_public_notes0, all_public_notes1),
+             key=lambda instance: instance.date)
+    return render(request,'discover.html', {'notes': all_public_notes, 'navbar': 'discover', 'tagged_notes': tagged_notes})
 
 
 def DeleteCheatsheet(request, id):
