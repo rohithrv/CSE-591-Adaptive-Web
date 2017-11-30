@@ -301,21 +301,23 @@ class CoreOps:
         conn = sqlite3.connect("db.sqlite3")
         c = conn.cursor()
         res = c.execute("select title, tags from notes_note_meta where tags like '%"+li+"%'")
-        temp_tags = []
+        temp_tags = ""
         for r in res:
             tags = r[0]+"~"+r[0]+"~"+r[1]
-            temp_tags.append(tags)
-        temp_tags = self.getTopFromCounter(temp_tags, 30)
+            temp_tags += tags
+
+        temp_tags = self.getTopFromCounter(temp_tags.split("~"), 30)
         # temp_tags.remove(li)
         c.close()
         conn.close()
-        return temp_tags
+        return temp_tags[1:]
 
 
 
     def genJSON(self):
         # tags = self.getMostusedTags()
         data = {}
+        data['name'] = 'root'
         data['children'] =[]
         tags = self.getMostusedTags()
         i = 0
