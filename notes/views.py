@@ -85,7 +85,14 @@ def Discover(request):
         all_public_notes = all_public_notes.filter(Q(title__contains=myquery) |
                                                    Q(content__contains=myquery)).distinct()
 
-    return render(request,'discover.html', {'notes': all_public_notes,'navbar': 'discover'})
+    return render(request,'discover.html', {'notes': all_public_notes, 'navbar': 'discover'})
+
+
+def DeleteCheatsheet(request, id):
+    c = CheatSheets.objects.get(user_id=request.user.get_username(), cheatsheet_title=id)
+    CheatSheet.objects.filter(user_id=request.user.get_username(), cheatsheet_title=id).delete()
+    c.delete()
+    return redirect('cheatsheet')
 
 
 def Cheatsheet(request):

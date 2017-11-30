@@ -72,7 +72,7 @@ color: black;
 {% for a in c %}
 <div class="card" style="margin-bottom: 10px; ">
   <div class="card-block">
-    <h4 class="card-title">{{ a.cheatsheet_title }}</h4>
+    <h4 class="card-title">{{ a.cheatsheet_title }}  <a href="{% url 'removecheat' a.cheatsheet_title  %}"><i class="fa fa-trash-o fs-lg" style="padding-left: 90%;" aria-hidden="true"></i></a></h4>
     <p class="card-text"></p>
     {% for b in cn %}
         {% if a.cheatsheet_title == b.cheatsheet_title %}
