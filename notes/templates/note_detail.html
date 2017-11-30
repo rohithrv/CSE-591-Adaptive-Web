@@ -90,20 +90,18 @@ color: black;
   {% if b.user_id == user.username %}
   {% if not cn %}
     <a class="dropdown-item" href="{% url 'addtocheat' b.cheatsheet_title notes.noteid %}">{{ b.cheatsheet_title }}</a>
+    {% endif %}
    {% for cnn in cn %}
 
    {% if cnn.cheatsheet_title == b.cheatsheet_title %}
-
-   {% if cnn.note_id == notes.noteid %}
     <a class="dropdown-item" style="background-color: lawngreen;">{{ b.cheatsheet_title }} (added)</a>
-    {% endif %}
+
+    {% else %}
+    <a class="dropdown-item" href="{% url 'addtocheat' b.cheatsheet_title notes.noteid %}">{{ b.cheatsheet_title }}</a>
     {% endif %}
     {% endfor %}
-    {% else %}
-    <a class="dropdown-item" href="{% url 'addtocheat' b.cheatsheet_title notes.noteid %}" style="background-color: brown;">{{ b.cheatsheet_title }}</a>
 
 
-    {% endif %}
     {% endif %}
    {% endfor %}
   </div>
