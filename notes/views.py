@@ -29,13 +29,14 @@ def register(request):
 def home(request):
     user_tags = obj.getCBforUser(request.user.get_username())
     user_tags_1 = obj.getCFforUser(request.user.get_username())
+    group_tags = obj.getMostusedTags()
     recomemended_cb = notes.objects.filter(noteid__in=user_tags, type=0)
     recomemended_cf = notes.objects.filter(noteid__in=user_tags_1, type=0)
     recomemended = sorted(
         chain(recomemended_cb, recomemended_cf),
         key=lambda instance: instance.date)
     all_public_notes = notes.objects.filter(type=0).order_by('date')
-    user_notes = notes.objects.filter(username=request.user.get_username()).order_by('-date')[:4]
+    user_notes = notes.objects.filter(username=request.user.get_username()).order_by('-date')[:3]
     tagged_notes = TagNotes.objects.all().order_by('-date')
     myquery = request.GET.get("query")
     # result_list = sorted(
@@ -48,7 +49,8 @@ def home(request):
                'tagged_notes': tagged_notes,
                'navbar': 'home',
                'user_notes': user_notes,
-               'r': recomemended}
+               'r': recomemended,
+               'groups': group_tags}
     return render(request, 'new_home.html', context)
 
 
@@ -99,7 +101,7 @@ def Discover(request):
         all_public_notes = sorted(
              chain(all_public_notes0, all_public_notes1),
              key=lambda instance: instance.date)
-    return render(request,'discover.html', {'notes': all_public_notes, 'navbar': 'discover', 'tagged_notes': tagged_notes})
+    return render(request,'discover.html', {'notes': all_public_notes, 'navbar': 'discover', 'tagged_notes': tagged_notes })
 
 
 def DeleteCheatsheet(request, id):
@@ -108,6 +110,12 @@ def DeleteCheatsheet(request, id):
     c.delete()
     return redirect('cheatsheet')
 
+def groups(request, pk):
+    tagged_notes = TagNotes.objects.all().order_by('-date')
+    all_public_notes = notes.objects.filter(type=0).order_by('upvote')
+    all_public_notes = all_public_notes.filter(Q(title__contains=pk) |
+                                               Q(content__contains=pk)).distinct()[:30]
+    return render(request, 'groups.html', {'notes': all_public_notes, 'tagged_notes': tagged_notes, 'gname': pk})
 
 def Cheatsheet(request):
     cn = CheatSheet.objects.all()

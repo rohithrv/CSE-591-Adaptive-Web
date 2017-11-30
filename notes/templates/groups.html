@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+
+.sidebar{
+    position: fixed;
+    top: 40px;
+    background-color: ghostwhite;
+    overflow-y: scroll;
+    bottom: 0;
+    left: 0;
+    z-index: 1030;
+    padding: 20px 0;
+    border-right: 1px solid #eee;
+
+}
+.nav-card{
+width: 235px;
+height: 200px;
+margin-left: 3px;
+background-color: whitesmoke;
+}
+.body-card{
+width: 238px;
+height: 200px;
+margin: 10px;
+background-color: #FFFFF0;
+}
+.card-text-new{
+width: 212px;
+height: 130px;
+font-size: small;
+overflow: scroll;
+}
+.headings{
+position: fixed;
+font-family: "Times New Roman", Times, serif;
+background-color: white;
+z-index: 2000;
+width: 75%;
+border-bottom: 1px solid #eee;
+padding-top: 13px;
+padding-bottom: 5px;
+}
+.heading-below-text{
+padding: 45px 10px 0px 10px;
+}
+.card-title-modify{
+font-size: larger;
+}
+.type{
+font-size: smaller;
+float: right;
+padding: 1px;
+}
+.link-style{
+color: black;
+}
+
+</style>
+<div class="container" >
+    <div class="row" >
+    <!-- sidebar starts here -->
+    {% include "sidebar.html" %}
+<!-- sidebar ends here -->
+
+    <div class="col-sm-9 col-md-11 col-lg-11" style="float: left; padding-top: 57px; padding-right: 0;">
+        <h4 class="headings">{{ gname }},</h4>
+        <div class="row heading-below-text">
+            {% for n in notes %}
+
+              <div class="card body-card" >
+              <a class="card-link link-style" href="{% url 'note_view' n.noteid  %}">
+                <div class="card-block" style="">
+                    <h4 class="card-title card-title-modify">{{ n.title|safe |striptags}} </h4>
+
+                    <p class="card-text card-text-new"> {{ n.content|safe |striptags}} </p>
+                </div></a>
+              </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+  </div>
+
+</div>
+
+
+{% endblock %}

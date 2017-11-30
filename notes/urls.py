@@ -9,6 +9,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^home/$', myviews.home, name='home'),
     url(r'^mynotes/$', myviews.mynotes, name='mynotes'),
+    url(r'^group/(?P<pk>.*)/$', myviews.groups, name='group'),
     url(r'^cheatsheet/$', myviews.Cheatsheet, name='cheatsheet'),
     url(r'^addtocheatsheet/(?P<id>.*)/(?P<pk>[0-9]+)/$', myviews.AddToCheat, name='addtocheat'),
     url(r'^removefromcheatsheet/(?P<id>.*)/(?P<pk>[0-9]+)/$', myviews.RemoveFromCheat, name='removefromcheat'),

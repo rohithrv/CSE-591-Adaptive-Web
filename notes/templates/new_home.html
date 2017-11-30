@@ -57,13 +57,18 @@ padding: 1px;
 .link-style{
 color: black;
 }
+.newdash{
+border-left: 1px solid #eee;
+padding-top: 100px;
+height: 50%;
+
+}
 </style>
 <div class="container" >
     <div class="row" >
     {% include "sidebar.html" %}
 <!-- main content -->
-<div class="col-sm-9 col-md-11 col-lg-11" style="float: left; padding-top: 57px; padding-right: 0;">
-<!--<center><button type="button" class="btn btn-secondary btn-lg" disabled>Welcome back {{user.username}}</button></center>-->
+<div class="col-sm-8 col-md-10 col-lg-10" style="float: left; padding-top: 57px; padding-right: 0; ">
 <h4 class="headings">Recents,</h4>
 <div class="row heading-below-text" >
 {% for n in user_notes %}
@@ -78,7 +83,17 @@ color: black;
 {% endfor %}
 </div>
 
-<h4 class="headings" style=" ">Recommended for you,</h4>
+
+</div>
+
+<div class="col-sm-1 col-md-1 col-lg-1 newdash" style="padding-left: 15px; ">
+<h5 class="card-title" style="font-size: large;">Recommended Groups</h5>
+{% for g in groups %}
+<a class="card-link" href="{% url 'group' g  %}">{{ g }}</a>
+{% endfor %}
+</div>
+<div class="row" style="padding-left: 10%; margin-right: 0;">
+      <h4 class="headings" style=" width: 82%;">Recommended for you,</h4>
 <div class="row heading-below-text" >
 {% for n in r %}
 
@@ -92,8 +107,7 @@ color: black;
               </div>
 {% endfor %}
 </div>
-</div>
-</div>
+</div></div>
       </div>
 
 
