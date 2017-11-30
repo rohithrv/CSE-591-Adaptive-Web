@@ -80,6 +80,8 @@ def Discover(request):
     all_public_notes = notes.objects.filter(type=0).order_by('date')
     myquery = request.GET.get("query")
     if myquery:
+        myquery = myquery.lstrip("Search: ")
+        print(myquery)
         all_public_notes = all_public_notes.filter(Q(title__contains=myquery) |
                                                    Q(content__contains=myquery)).distinct()
 
