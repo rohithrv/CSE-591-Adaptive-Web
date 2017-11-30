@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^mynotes/$', myviews.mynotes, name='mynotes'),
     url(r'^cheatsheet/$', myviews.Cheatsheet, name='cheatsheet'),
     url(r'^addtocheatsheet/(?P<id>.*)/(?P<pk>[0-9]+)/$', myviews.AddToCheat, name='addtocheat'),
+    url(r'^removecheatsheet/(?P<id>.*)/(?P<pk>[0-9]+)/$', myviews.RemoveFromCheat, name='removefromcheat'),
     url(r'^notes/add/$', myviews.NoteCreate, name='note_create'),
     url(r'^notes/discover/$', myviews.Discover, name='discover'),
     url(r'^notes/(?P<pk>[0-9]+)/$', myviews.NoteDetail, name='note_view'),

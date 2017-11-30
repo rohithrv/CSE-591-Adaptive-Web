@@ -126,8 +126,14 @@ def NoteDetail(request, pk):
     return render(request, 'note_detail.html', context)
 
 
-def AddToCheat(request,id,pk):
+def AddToCheat(request, id, pk):
     CheatSheet.objects.create(user_id=request.user.get_username(), cheatsheet_title=id, note_id=pk, date=datetime.now())
+    return redirect('note_view', pk=pk)
+
+
+def RemoveFromCheat(request, id, pk):
+    cn = CheatSheet.objects.get(user_id=request.user.get_username(), cheatsheet_title=id, note_id=pk)
+    cn.delete()
     return redirect('note_view', pk=pk)
 
 

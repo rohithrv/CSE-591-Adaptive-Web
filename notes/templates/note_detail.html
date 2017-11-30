@@ -94,7 +94,7 @@ color: black;
    {% for cnn in cn %}
 
    {% if cnn.cheatsheet_title == b.cheatsheet_title %}
-    <a class="dropdown-item" style="background-color: lawngreen;">{{ b.cheatsheet_title }} (added)</a>
+    <a class="dropdown-item" href="{% url 'removefromcheat' b.cheatsheet_title notes.noteid %}" style="background-color: lawngreen;">{{ b.cheatsheet_title }} (added)</a>
 
     {% else %}
     <a class="dropdown-item" href="{% url 'addtocheat' b.cheatsheet_title notes.noteid %}">{{ b.cheatsheet_title }}</a>
