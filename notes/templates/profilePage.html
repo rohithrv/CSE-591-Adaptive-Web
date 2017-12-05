@@ -1,16 +1,84 @@
 <!DOCTYPE html>
-{% include 'base.html' %}
-{% load static %}
-
 <html lang="en">
+
 <head>
+	<title>Study Genie</title>
+	<meta charset="utf-8" />
+	{% load staticfiles %}
+    {% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}" />
+
+	<meta name="viewport" content = "width=device-width, initial-scale=1.0">
+	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="{% static 'bootstrap-tagsinput.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rainbow/1.2.0/themes/github.css">
+<style>
 
-  </head>
+.myfixed{
+position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1050;
+}
+</style>
+<nav class="navbar myfixed" style="background-color: dodgerblue;">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">StudyGenie</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="{% if navbar == 'home' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="{% if navbar == 'mynotes' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'mynotes' %}">My notes</a>
+      </li>
+      <li class="{% if navbar == 'discover' %}active{% endif %}">
+       <a class="nav-link" style="color: aquamarine;" href="{% url 'discover' %}">Discover</a>
+      </li>
+      <li class="{% if navbar == 'cheatsheet' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'cheatsheet' %}">Create cheat-sheet</a>
+      </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+      <li class="{% if navbar == 'note_create' %}active{% endif %}">
+        <a class="nav-link" href="{% url 'note_create' %}">New Note</a>
+      </li>
+    <li>
+        <a class="nav-link" href="{% url 'profile' %}">My Profile</a>
+      </li>
+       <li>
+        <li><a href="{% url 'logout' %}"><span ></span><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+    <!--navbar ends here -->
+</head>
+<script>
+$(".n li").on("click", function(){
+   $(".n").find(".active").removeClass("active");
+   $(this).addClass("active");
+});
+</script>
+
 <div style="margin-top: 10%; margin-left: 30%">
     {% include 'osum.html' %}
 </div>

@@ -59,7 +59,9 @@ padding: 1px;
 .link-style{
 color: black;
 }
+
 </style>
+
 {% include 'finalScreenVisual.html' %}
 <!--<div class="container" >
     <div class="row" >
@@ -76,8 +78,6 @@ color: black;
         </form>
     </div>
     <div class="row" >
-    <!-- sidebar starts here-->
-
     <style>
 .scrolltext{
 overflow: scroll;
@@ -95,7 +95,7 @@ border-right: 1px solid #eee;
 
 }
 .nav-card{
-width: 235px;
+width: 91%;
 height: 200px;
 margin-left: 3px;
 background-color: white;
@@ -119,13 +119,8 @@ color: black;
 <div class="col-sm-3 col-md-1 col-lg-1" >
   <nav class="col-sm-3 col-md-2 d-sm-block bg-light d-none sidebar ">
         <ul class="nav nav-pills flex-column" style=" position: fixed; ">
+
   <div style="overflow: scroll;height: 90vh;">
- <!--   <div class="card nav-card">
-        <div class="card-block">
-            <h4 class="card-title card-title-modify">Quick note</h4>
-            <textarea class="form-control card-text" id="exampleTextarea" rows="5"></textarea>
-        </div>
-    </div>-->
     {% if not tagged_notes %}
      <div class="card nav-card" >
               <a class="card-link link-style" href="#">
@@ -135,7 +130,7 @@ color: black;
                     <p class="card-text card-text-new" style="padding-top: 28%; padding-left: 15%;"> Nothing Tagged Yet! </p>
                 </div></a>
               </div>
-{% endif %}
+   {% else %}
     {% for n in tagged_notes %}
      <div class="card nav-card" >
               <a class="card-link link-style" href="{% url 'note_view' n.noteid  %}">
@@ -145,9 +140,10 @@ color: black;
                     <p class="card-text card-text-new scrolltext"> {{ n.content | safe| striptags }} </p>
                 </div></a>
               </div>
-{% endfor %}
+              {% endfor %}
+{% endif %}
 
-</ul>
+</div></ul>
 </nav>
 </div>
 <!-- main content -->

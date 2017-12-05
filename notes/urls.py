@@ -2,12 +2,12 @@
 from django.conf.urls import url, include
 from django.contrib.auth import views as aviews
 from . import views as myviews
-from django.conf.urls import handler404, handler500
 from django.conf import settings
 from django.conf.urls.static import static
 
 
 urlpatterns = [
+    url(r'^$', myviews.my_login, name='login'),
     url(r'^home/$', myviews.home, name='home'),
     url(r'^mynotes/$', myviews.mynotes, name='mynotes'),
     url(r'^group/(?P<pk>.*)/$', myviews.groups, name='group'),
@@ -24,14 +24,15 @@ urlpatterns = [
     url(r'^notes/(?P<pk>[0-9]+)/downvote/$', myviews.NoteDown, name='note_downvote'),
     url(r'^notes/(?P<pk>[0-9]+)/removetag/$', myviews.NoteUnTag, name='note_untag'),
     url(r'^notes/(?P<pk>[0-9]+)/delete/$', myviews.NoteDelete, name='note_delete'),
-    url(r'^$',aviews.login, {'template_name': 'login.html'},name='login'),
+    # url(r'^$',aviews.login, {'template_name': 'login.html'},name='login'),
     url(r'^logout/$',aviews.logout, {'next_page': 'login'}, name='logout'),
     url(r'^register/$', myviews.register, name='register'),
     # url(r'^summernote/', include('django_summernote.urls')),
     url(r'^profile/$', myviews.displayUserProfile, name='profile'),
 ]
 
-handler404 = myviews.error404
+handler404 = "QuizWhiz.notes.views.error404"
 
+handler500 = "QuizWhiz.notes.views.error500"
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

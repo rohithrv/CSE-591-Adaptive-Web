@@ -105,6 +105,9 @@ color: black;
 
     {% endif %}
    {% endfor %}
+   {% if c.user_id != user.username %}
+   <a class="dropdown-item" href="{% url 'cheatsheet' %}" >Create cheatsheet</a>
+   {% endif %}
   </div>
 </div>
   </div>

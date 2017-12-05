@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-	<title>QuizWhiz</title>
+	<title>StudyGenie</title>
 	<meta charset="utf-8" />
 	{% load staticfiles %}
 
@@ -39,7 +39,8 @@ position: fixed;
 <div class="container" id="login" style="padding-left: 400px; padding-right:400px; padding-top: 50px;">
     	<div class="row" >
 
-<form  method="post" action="{% url 'login' %}">{% csrf_token %}
+<form  method="post" action="{% url 'login' %}">
+{% csrf_token %}
 
   <div class="form-group">
     <label for="username">Username</label>

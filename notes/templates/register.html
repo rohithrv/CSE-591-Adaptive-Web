@@ -1,16 +1,46 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
+<head>
+	<title>StudyGenie</title>
+	<meta charset="utf-8" />
+	{% load staticfiles %}
 
-	<body >
+	<meta name="viewport" content = "width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<style>
 
-		<div class="container"  >
+.myfixed{
+position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1050;
+}
+</style>
+	<!--navbar starts here -->
+    <nav class=" n navbar navbar-inverse bg-primary navbar-expand-md navbar-toggleable-md navbar-default navbar-fixed-top bg-faded myfixed" style="background-color: dodgerblue;">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#">StudyGenie</a>
+</nav>
+
+    <!--navbar ends here -->
+</head>
+
+	<body style="">
+
+		<div class="container" style="padding-top: 100px; " >
 
 
-<form method="post" >
+<form method="POST" >
 {% csrf_token %}
-<center><h4 style="color: darkblue;" >Register Here!</h4></center>
-    <div class="form-row" >
+<center><h4 style="color: darkblue; " >Register Here!</h4></center>
+    <div class="form-row" style="padding-left: 350px;">
       <div class="form-group col-md-6">
       <label for="userid" class="col-form-label">Username</label><input type="text" class="form-control" name="userid" placeholder="Create Username">
     </div>
@@ -20,10 +50,9 @@
      <input type="password" class="form-control" name="pwd" placeholder="Create Password">
      </div>
 
-      <center><button type="submit" value="Register" class="btn btn-primary">Register</button></center>
+      <button type="submit" value="Register" class="btn btn-primary" style="margin-left: 150px;">Register</button>
      </div>
 </form>
 
 	</div></body>
 
-{% endblock %}

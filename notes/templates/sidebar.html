@@ -15,7 +15,7 @@ border-right: 1px solid #eee;
 
 }
 .nav-card{
-width: 235px;
+width: 91%;
 height: 200px;
 margin-left: 3px;
 background-color: white;
@@ -58,7 +58,7 @@ color: black;
                     <p class="card-text card-text-new" style="padding-top: 28%; padding-left: 15%;"> Nothing Tagged Yet! </p>
                 </div></a>
               </div>
-{% endif %}
+   {% else %}
     {% for n in tagged_notes %}
      <div class="card nav-card" >
               <a class="card-link link-style" href="{% url 'note_view' n.noteid  %}">
@@ -68,8 +68,9 @@ color: black;
                     <p class="card-text card-text-new scrolltext"> {{ n.content | safe| striptags }} </p>
                 </div></a>
               </div>
-{% endfor %}
+              {% endfor %}
+{% endif %}
 
-</ul>
+</div></ul>
 </nav>
 </div>

@@ -2,6 +2,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.db.models import F
+from django.views import defaults
+
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as alogin
@@ -19,13 +21,28 @@ def error404(request):
     return render(request, '404.html')
 
 
+def error500(request):
+    return HttpResponseRedirect('login')
+
+
+def my_login(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('home')
+    else:
+        return login(request)
+
+
 def register(request):
-    if request.method == 'POST':
+    if request.method == "POST":
+        print("hello")
         username = request.POST.get('userid')
         password = request.POST.get('pwd')
         user = User.objects.create_user(username=username, password=password)
+        notes.objects.create(type=1, username=username, authorid=username,
+                             title="", content="", date=datetime.now())
+        user_meta.objects.create(user_id=username)
         alogin(request, user)
-        return redirect('new_home')
+        return redirect('home')
     else:
         return render(request, 'register.html')
 
@@ -41,7 +58,7 @@ def home(request):
         chain(recomemended_cb, recomemended_cf),
         key=lambda instance: instance.date)
     user_notes = notes.objects.filter(username=request.user.get_username()).order_by('-date')[:3]
-    tagged_notes = TagNotes.objects.all().order_by('-date')
+    tagged_notes = TagNotes.objects.filter(username=request.user.get_username()).order_by('-date')
     myquery = request.GET.get("query")
     # result_list = sorted(
     #     chain(all_public_notes, user_notes),
@@ -79,7 +96,7 @@ def displayUserProfile(request):
 @login_required
 def mynotes(request):
     n = notes.objects.filter(username=request.user.get_username()).order_by('-date')
-    tagged_notes = TagNotes.objects.all().order_by('-date')
+    tagged_notes = TagNotes.objects.filter(username=request.user.get_username()).order_by('-date')
     myquery = request.GET.get("query")
     if myquery:
         n = n.filter(Q(title__contains=myquery) |
@@ -90,7 +107,7 @@ def mynotes(request):
 @login_required
 def Discover(request):
     all_public_notes = notes.objects.filter(type=0).order_by('upvote')
-    tagged_notes = TagNotes.objects.all().order_by('-date')
+    tagged_notes = TagNotes.objects.filter(username=request.user.get_username()).order_by('-date')
     myquery = request.GET.get("query")
     if myquery:
         myquery = myquery.lstrip("Search: ")
@@ -115,7 +132,7 @@ def DeleteCheatsheet(request, id):
 
 @login_required
 def groups(request, pk):
-    tagged_notes = TagNotes.objects.all().order_by('-date')
+    tagged_notes = TagNotes.objects.filter(username=request.user.get_username()).order_by('-date')
     all_public_notes = notes.objects.filter(type=0).order_by('upvote')
     all_public_notes = all_public_notes.filter(Q(title__contains=pk) |
                                                Q(content__contains=pk)).distinct()[:30]
@@ -123,9 +140,9 @@ def groups(request, pk):
 
 @login_required
 def Cheatsheet(request):
-    cn = CheatSheet.objects.all()
-    c = CheatSheets.objects.all()
-    tagged_notes = TagNotes.objects.all().order_by('-date')
+    cn = CheatSheet.objects.filter(user_id=request.user.get_username())
+    c = CheatSheets.objects.filter(user_id=request.user.get_username())
+    tagged_notes = TagNotes.objects.filter(username=request.user.get_username()).order_by('-date')
     n = notes.objects.all()
     if request.method == "POST":
         ctitle = request.POST.get('ctitle')
@@ -143,13 +160,13 @@ def NoteDetail(request, pk):
     title_rec = notes.objects.filter(noteid__in=CB_title_tags, type=0)
     content_rec = notes.objects.filter(noteid__in=CB_note_tags, type=0)
     n = notes.objects.get(noteid=pk)
-    c = CheatSheets.objects.all()
+    c = CheatSheets.objects.filter(user_id=request.user.get_username())
     try:
         cn = CheatSheet.objects.filter(note_id=pk)
     except CheatSheet.DoesNotExist:
         cn = None
     try:
-        lm = Likes.objects.filter(noteid=pk)
+        lm = Likes.objects.filter(noteid=pk, voted_user=request.user.get_username())
 
     except Likes.DoesNotExist:
         lm = None
@@ -172,7 +189,7 @@ def RemoveFromCheat(request, id, pk):
 
 @login_required
 def NoteCreate(request):
-    tagged_notes = TagNotes.objects.all().order_by('-date')
+    tagged_notes = TagNotes.objects.filter(username=request.user.get_username()).order_by('-date')
     if request.method == 'POST':
         title = request.POST.get('title')
         content = request.POST.get('content')
@@ -191,7 +208,7 @@ def NoteCreate(request):
 @login_required
 def NoteEdit(request, pk):
     mynote = get_object_or_404(notes, noteid=pk)
-    tagged_notes = TagNotes.objects.all().order_by('-date')
+    tagged_notes = TagNotes.objects.filter(username=request.user.get_username()).order_by('-date')
     # n = notes.objects.get(noteid=pk)
     if request.method == 'POST':
         edited_note = notes.objects.get(noteid=pk)
@@ -228,7 +245,7 @@ def NoteTag(request, pk):
     set_tag = notes.objects.get(noteid=pk)
     set_tag.tagged = 1;
     set_tag.save()
-    TagNotes.objects.create(username=tag_this_note.username, noteid=tag_this_note.noteid,
+    TagNotes.objects.create(username=request.user.get_username(), noteid=tag_this_note.noteid,
                             title=tag_this_note.title, content=tag_this_note.content, date=datetime.now())
     return redirect('home')
 

@@ -54,7 +54,11 @@ class CoreOps:
         final_title_tags = []
         final_tags = []
         print("get notes with same tags as this one "+str(note_id))
-        title_tags, note_tags = self.getTagsForNote(note_id)
+        print("!!!!!!!!!!!!!" + str(type(self.getTagsForNote(note_id))))
+        if self.getTagsForNote(note_id) is None:
+            title_tags, note_tags = " ", " "
+        else:
+            title_tags, note_tags = self.getTagsForNote(note_id)
         res = c.execute("select note_id, tags, title from notes_note_meta where note_id != "+str(note_id))
         for r in res:
             # print(r)
@@ -92,6 +96,7 @@ class CoreOps:
         print("user recomendations coming right up")
         user_tags = self.getTagsForUser(user_id)
         res = c.execute("select note_id, tags, title from notes_note_meta")
+        print(res.arraysize)
         for r in res:
             # print(r)
             noteid = r[0]
@@ -118,7 +123,7 @@ class CoreOps:
         full_user_list = []
         c = conn.cursor()
         user_tags = self.getTagsForUser(str(user_id))
-        res = c.execute("select user_id, tags, titles from notes_user_meta where user_id != "+str(user_id))
+        res = c.execute("select user_id, tags, titles from notes_user_meta where user_id != '"+ str(user_id)+"'")
         for r in res:
             new_user_id = r[0]
             new_user_tags = r[1].split("~")
@@ -174,19 +179,22 @@ class CoreOps:
         # call this function when the user opens a note , pass the user_id and note_id as argument
         tags = ""
         t_tags = ""
-        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id ="+str(user_id))
+        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id ='"+ str(user_id)+"'")
         if (len(res.fetchall())==0):
             # print("this row doest exist yet let create it")
             c.execute("insert or replace into notes_user_meta VALUES ("+str(user_id)+", '', '')")
             conn.commit()
-        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id =" + str(user_id))
+        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id ='"+ str(user_id)+"'")
         # print(res)
         for r in res:
             # print(r)
             tags = r[1]
             t_tags = r[2]
-
-        title_tags, note_tags = self.getTagsForNote(note_id)
+        print("!!!!!!!!!!!!!"+str(type(self.getTagsForNote(note_id))))
+        if self.getTagsForNote(note_id) is None:
+            title_tags, note_tags = " ", " "
+        else:
+            title_tags, note_tags = self.getTagsForNote(note_id)
         # print(note_tags)
         tags = ','.join(note_tags)+"," + tags
         t_tags = ','.join(title_tags)+", " + str(t_tags)
@@ -208,7 +216,7 @@ class CoreOps:
         li = li.replace(" ","")
         data = li.replace(",", "~")
         # data = data.repalce(" ","")
-        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id =" + str(user_id))
+        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id ='"+ str(user_id)+"'")
         # res[0][1]
         # res[0][2]
         for r in res:
@@ -254,17 +262,19 @@ class CoreOps:
             # print(r[1].split("~"))
             c.close()
             conn.close()
+            if len(list(temp2.split("~"))) == 0 and len(list(temp.split("~"))) == 0 :
+                return " ", " "
             return list(temp2.split("~")), list(temp.split("~"))
 
     #     returns a python list of all the tags associated with a note
 
 
-    def getTagsForUser(self, user_id, special = 0):
+    def getTagsForUser(self, userid, special = 0):
         conn = sqlite3.connect("db.sqlite3")
         c = conn.cursor()
         # call this fucntion to get the tags that are associateaad to each user based on the notes he viewed
-        print("getting tags for user "+user_id)
-        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id = "+str(user_id))
+        print("getting tags for user "+userid)
+        res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id = '"+ str(userid)+"'" )
         tags=""
         for r in res:
             tags = r[1]+"~"+r[2]
@@ -396,7 +406,7 @@ class CoreOps:
         words = word_tokenize(st)
         for word in words:
 
-            if word not in stop_words and (not word.isdigit()) and len(word) >2:
+            if word not in stop_words and (not word.isdigit()) and len(word) > 2:
                 token_list.append(word.lower())
         key_words = Counter(token_list).most_common(5)
         return_list = []
@@ -406,12 +416,12 @@ class CoreOps:
 
         # print(return_list)
         fin = '~'.join(return_list)
-        fin = fin.replace("'","")
+        fin = fin.replace("'", "")
         print(fin)
         return fin
 
 obj = CoreOps()
-obj.getOSUMJson(2)
+# obj.getOSUMJson(2)
 # obj.genJSON()
 # obj.getTgasForAllNotes()
 # obj.getMostusedTags()

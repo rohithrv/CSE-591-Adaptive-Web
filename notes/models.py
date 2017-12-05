@@ -61,7 +61,7 @@ class Likes(models.Model):
 # add note datetime
 class notes(models.Model):
     noteid = models.AutoField(primary_key=True)
-    authorid = models.PositiveIntegerField()
+    authorid = models.CharField(max_length=20)
     type = models.PositiveIntegerField()
     points = models.IntegerField(default=0, blank=True)
     upvote = models.IntegerField(default=0, blank=True)
@@ -71,6 +71,3 @@ class notes(models.Model):
     title = models.CharField(max_length=50)
     content = models.CharField(max_length=10000)
     date = models.DateTimeField(default=datetime.now)
-
-    def __str__(self):
-        return self.noteid + ' - ' + self.title
