@@ -182,7 +182,7 @@ class CoreOps:
         res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id ='"+ str(user_id)+"'")
         if (len(res.fetchall())==0):
             # print("this row doest exist yet let create it")
-            c.execute("insert or replace into notes_user_meta VALUES ("+str(user_id)+", '', '')")
+            c.execute("insert or replace into notes_user_meta VALUES ('"+str(user_id)+"', '', '')")
             conn.commit()
         res = c.execute("select user_id, tags, titles from notes_user_meta WHERE user_id ='"+ str(user_id)+"'")
         # print(res)
@@ -231,6 +231,7 @@ class CoreOps:
         conn.close()
 
     def saveTheNote(self, note_id, note_title, note_text):
+        print("saving the note"+str(note_id))
         conn = sqlite3.connect("db.sqlite3")
         c = conn.cursor()
         # call this function when the note is created or existing note is edited
@@ -239,8 +240,9 @@ class CoreOps:
         title_tags = self.getTagsFromString(note_title)
         # note_tags = note_tags.split("~")
         # title_tags = title_tags.split("~")
+        print(str(note_id)+" , '"+note_tags+"' , '"+title_tags)
 
-        c.execute("insert or replace into notes_note_meta (note_id, tags, title) VALUES ("+str(note_id)+" , '"+note_tags+"' , '"+title_tags+"' )")
+        c.execute("insert or replace into notes_note_meta (note_id, tags, title) VALUES ('"+str(note_id)+"' , '"+note_tags+"' , '"+title_tags+"' )")
         conn.commit()
         c.close()
         conn.close()

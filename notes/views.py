@@ -156,6 +156,7 @@ def NoteDetail(request, pk):
     obj.userOpenedNote(request.user.get_username(), pk)
     # updates your tags , call only when user openes others notes
     CB_title_tags, CB_note_tags = obj.getCBforNote(pk)
+    print(CB_title_tags)
     # for any note, results will contain mynotes also, filter it
     title_rec = notes.objects.filter(noteid__in=CB_title_tags, type=0)
     content_rec = notes.objects.filter(noteid__in=CB_note_tags, type=0)
@@ -219,6 +220,7 @@ def NoteEdit(request, pk):
         edited_note.authorid = request.user.get_username()
         edited_note.date = datetime.now()
         edited_note.save()
+        obj.saveTheNote(pk, edited_note.title, edited_note.content)
         return redirect('mynotes')
     else:
         return render(request, 'edit_note.html',
@@ -237,6 +239,8 @@ def NoteEdit(request, pk):
 def NoteDelete(request, pk):
     edited_note = notes.objects.get(noteid=pk)
     edited_note.delete()
+    notemeta = note_meta.objects.get(note_id=pk)
+    notemeta.delete()
     return redirect('mynotes')
 
 @login_required
